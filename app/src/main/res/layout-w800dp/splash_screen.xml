@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="280dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        // Primary logo
+
+        <ImageView
+            android:id="@+id/primary_logo"
+            android:layout_width="940px"
+            android:layout_height="263px"
+            app:srcCompat="@drawable/forhealth_primary_logo" />
+
+        // Tag Line
+
+        <TextView
+            android:id="@+id/tagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-40dp"
+            android:layout_marginBottom="32px"
+            android:fontFamily="@font/raleway_medium"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+
+            android:text="@string/tagline"
+            android:textColor="#000000"
+            android:textFontWeight="700"
+            android:textSize="31px"
+            android:textStyle="normal"
+            android:visibility="gone" />
+
+        // Get Start Button
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/get_start_button"
+            android:layout_width="400px"
+            android:layout_height="91px"
+            android:layout_marginTop="190px"
+            android:layout_marginBottom="100dp"
+            app:cardBackgroundColor="#EEF0F6"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="3dp"
+            android:visibility="gone"
+            tools:layout_editor_absoluteX="507dp"
+            tools:layout_editor_absoluteY="621dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/raleway_medium"
+                    android:text="Get Started"
+                    android:textAlignment="center"
+                    android:textColor="#2E476E"
+                    android:textFontWeight="700"
+                    android:textSize="30px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

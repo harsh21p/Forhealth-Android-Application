@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Forhealth</string>
+    <string name="tagline">we are for you I we are for health</string>
+    <string name="thank_you">Thank you for choosing</string>
+    <string name="for_text">for</string>
+    <string name="health_text">health!</string>
+    <string name="paragraph">Our core purpose is to transform the physical rehabilitation and fitness sector by devloping robotic assistive technologies.</string>
 </resources>

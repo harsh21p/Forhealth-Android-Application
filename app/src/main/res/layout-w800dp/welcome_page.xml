@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    // Logo
+
+    <ImageView
+        android:id="@+id/back_to_splash_screen"
+        android:layout_width="29px"
+        android:layout_height="29px"
+        android:layout_marginEnd="29dp"
+        android:layout_marginRight="29dp"
+        app:layout_constraintBottom_toTopOf="@+id/cardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_restore_24"
+        tools:ignore="VectorDrawableCompat" />
+
+    // Product Photo
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="689px"
+        android:layout_height="680px"
+        android:layout_gravity="center"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="170dp"
+        android:outlineAmbientShadowColor="#FFFFFF"
+        android:outlineSpotShadowColor="#FFFFFF"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="1000px"
+            android:layout_height="600dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/product_photo" />
+
+    </androidx.cardview.widget.CardView>
+
+    // Text
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="545dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toTopOf="@+id/cardView">
+
+        <TextView
+            android:id="@+id/thankyoutext2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/raleway_medium"
+            android:text="@string/thank_you"
+            android:textAlignment="center"
+            android:textColor="#042A73"
+            android:textFontWeight="700"
+            android:textSize="72px" />
+
+
+        <LinearLayout
+            android:id="@+id/forhealthlogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/thankyoutext2"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/forhealth1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/raleway_medium"
+                android:text="@string/for_text"
+                android:textAlignment="center"
+                android:textColor="#EE723D"
+                android:textFontWeight="700"
+                android:textSize="72px" />
+
+            <TextView
+                android:id="@+id/forhealth2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/raleway_medium"
+                android:text="@string/health_text"
+                android:textAlignment="center"
+                android:textColor="#042A73"
+                android:textFontWeight="700"
+                android:textSize="72px" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/forhealthlogo"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100px"
+            android:fontFamily="@font/raleway_medium"
+            android:text="@string/paragraph"
+            android:textAlignment="center"
+            android:textColor="#46555C"
+            android:textFontWeight="600"
+            android:textSize="48px" />
+
+
+    </RelativeLayout>
+
+    // Proceed Button
+
+    <androidx.cardview.widget.CardView
+
+        android:id="@+id/proceed_button"
+        android:layout_width="251px"
+        android:layout_height="104px"
+        app:cardBackgroundColor="#EBEBEB"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/relativeLayout"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/txtnext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/raleway_medium"
+                android:text="NEXT"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textFontWeight="700"
+                android:textSize="30px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="21px"
+                android:layout_toEndOf="@+id/txtnext"
+                android:layout_toRightOf="@+id/txtnext"
+                android:src="@drawable/ic_next_button" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    // Screen number indicator
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/proceedbutton">
+
+        <View
+            android:id="@+id/ellipse_104"
+            android:layout_width="19px"
+            android:layout_height="19px"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/indicator_selected"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/ellipse_105"
+            android:layout_width="19px"
+            android:layout_height="19px"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/indicator_not_selected"
+            app:layout_constraintBottom_toBottomOf="@+id/ellipse_104"
+            app:layout_constraintStart_toEndOf="@+id/ellipse_104"
+            app:layout_constraintTop_toTopOf="@+id/ellipse_104"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/ellipse_106"
+            android:layout_width="19px"
+            android:layout_height="19px"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/indicator_not_selected"
+            app:layout_constraintBottom_toBottomOf="@+id/ellipse_104"
+            app:layout_constraintStart_toEndOf="@+id/ellipse_105"
+            app:layout_constraintTop_toTopOf="@+id/ellipse_104" />
+
+        <View
+            android:id="@+id/ellipse_107"
+            android:layout_width="19px"
+            android:layout_height="19px"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/indicator_not_selected"
+            app:layout_constraintBottom_toBottomOf="@+id/ellipse_104"
+            app:layout_constraintStart_toEndOf="@+id/ellipse_106"
+            app:layout_constraintTop_toTopOf="@+id/ellipse_104" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

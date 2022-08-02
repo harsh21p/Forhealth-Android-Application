@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.forhealth">
 
     <application
@@ -8,6 +9,46 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Forhealth" />
+        android:theme="@style/Theme.BaseTheme">
+
+        // Splash Screen
+
+        <activity
+            android:name=".activity.SplashScreen"
+            android:screenOrientation="landscape"
+            android:label="ForHealth"
+            android:theme="@style/Theme.Transparent"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        // Welcome Page
+
+        <activity android:name="com.example.forhealth.activity.WelcomePage"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // ChoiceDoctorOrPatient
+
+        <activity android:name="com.example.forhealth.activity.ChoiceDoctorOrPatient"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // DoctorsLoginPage
+
+        <activity android:name="com.example.forhealth.activity.DoctorsLoginPage"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+    </application>
 
 </manifest>
