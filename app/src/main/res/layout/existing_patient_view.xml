@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout4"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20px"
+    android:layout_margin="8dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="horizontal">
+    
+        <ImageView
+            android:id="@+id/profile_existing_user_recycler"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:src="@drawable/background_profile_image" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="387px"
+            android:layout_height="77px"
+            android:layout_marginLeft="56px"
+            app:cardBackgroundColor="#EEF0F6"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="3dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/existing_user_name_recycler"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@null"
+                    android:fontFamily="@font/raleway_medium"
+                    android:hint="Divya"
+                    android:textAlignment="center"
+                    android:textColor="#2E476E"
+                    android:textColorHint="#2E476E"
+                    android:textFontWeight="700"
+                    android:textSize="25px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="106px"
+            android:layout_height="77px"
+            android:layout_marginLeft="56px"
+    
+            app:cardBackgroundColor="#EEF0F6"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="3dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/existing_user_age_recycler"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@null"
+                    android:fontFamily="@font/raleway_medium"
+                    android:hint="18"
+                    android:textAlignment="center"
+                    android:textColor="#2E476E"
+                    android:textColorHint="#2E476E"
+                    android:textFontWeight="700"
+                    android:textSize="25px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="303px"
+            android:layout_height="77px"
+            android:layout_marginLeft="56px"
+    
+            app:cardBackgroundColor="#EEF0F6"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="3dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/existing_user_phone_recycler"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@null"
+                    android:fontFamily="@font/raleway_medium"
+                    android:hint="+91 9454878765"
+                    android:textAlignment="center"
+                    android:textColor="#2E476E"
+                    android:textColorHint="#2E476E"
+                    android:textFontWeight="700"
+                    android:textSize="25px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="303px"
+            android:layout_height="77px"
+            android:layout_marginLeft="56px"
+    
+            app:cardBackgroundColor="#EEF0F6"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="3dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/existing_user_date_recycler"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@null"
+                    android:fontFamily="@font/raleway_medium"
+                    android:hint="20-08-2022"
+                    android:textAlignment="center"
+                    android:textColor="#2E476E"
+                    android:textColorHint="#2E476E"
+                    android:textFontWeight="700"
+                    android:textSize="25px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/view_button"
+            android:layout_width="181px"
+            android:layout_height="77px"
+            android:layout_marginLeft="56px"
+            app:cardBackgroundColor="#EEF0F6"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="3dp"
+            android:layout_marginRight="10dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@null"
+                    android:fontFamily="@font/raleway_medium"
+                    android:hint="View"
+                    android:textAlignment="center"
+                    android:textColor="#2E476E"
+                    android:textColorHint="#2E476E"
+                    android:textFontWeight="700"
+                    android:textSize="25px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>

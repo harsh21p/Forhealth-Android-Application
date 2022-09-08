@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/idDialogBoxAvatarHolder"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="20dp"
+            android:elevation="0dp"
+            app:cardBackgroundColor="#EEF0F6"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/custom_dialog_existing_user_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/avatar_male"
+                android:layout_margin="15dp" />
+
+
+
+        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/custom_dialog_existing_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/existing_user_profile"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="25dp"
+            android:fontFamily="@font/raleway_medium"
+            android:text="@string/app_name"
+            android:textColor="#082F6A"
+            android:textFontWeight="800"
+            android:textSize="25dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/existing_user_profile"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="10dp"
+            android:text="Enter Login Pin"
+            android:textColor="#000000"
+            android:textFontWeight="800"
+            android:textSize="15dp" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/custom_dialog_login_pin_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/round_border_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:paddingVertical="15dp" />
+
+        <EditText
+            android:id="@+id/custom_dialog_login_pin_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/round_border_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:paddingVertical="15dp" />
+
+        <EditText
+            android:id="@+id/custom_dialog_login_pin_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/round_border_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:paddingVertical="15dp" />
+
+        <EditText
+            android:id="@+id/custom_dialog_login_pin_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/round_border_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:paddingVertical="15dp" />
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/custom_dialog_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_marginVertical="20dp"
+        android:layout_gravity="center" />
+
+</LinearLayout>

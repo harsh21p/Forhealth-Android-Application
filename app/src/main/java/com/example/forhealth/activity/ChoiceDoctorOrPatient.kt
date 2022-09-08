@@ -1,6 +1,5 @@
 package com.example.forhealth.activity
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
@@ -9,8 +8,8 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import com.example.forhealth.R
+import com.example.forhealth.common.Common
 import kotlinx.android.synthetic.main.choice_doctor_or_patient.*
 
 class ChoiceDoctorOrPatient : AppCompatActivity() {
@@ -39,9 +38,10 @@ class ChoiceDoctorOrPatient : AppCompatActivity() {
             val iPhysiotherapistLoginPage = Intent(this@ChoiceDoctorOrPatient, DoctorsLoginPage::class.java)
             startActivity(iPhysiotherapistLoginPage)
         })
-
+        val common = Common(this)
         patient_login_card.setOnClickListener(View.OnClickListener {
-            comingSoonDialogBox()
+            val view = layoutInflater.inflate(R.layout.custom_dialog_layout,null)
+            common.comingSoonDialogBox(view)
         })
 
         back_to_splash_screen.setOnClickListener(View.OnClickListener {
@@ -51,15 +51,4 @@ class ChoiceDoctorOrPatient : AppCompatActivity() {
         })
     }
 
-    private fun comingSoonDialogBox() {
-        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
-        val view = layoutInflater.inflate(R.layout.custom_dialog_layout,null)
-        val  okButton = view.findViewById<CardView>(R.id.custom_dialog_ok_button)
-        builder.setView(view)
-        okButton.setOnClickListener {
-            builder.dismiss()
-        }
-        builder.setCanceledOnTouchOutside(true)
-        builder.show()
-    }
 }

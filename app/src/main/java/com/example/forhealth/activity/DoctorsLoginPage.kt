@@ -7,10 +7,11 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.forhealth.R
+import com.example.forhealth.database.MyDatabaseHelper
 import kotlinx.android.synthetic.main.doctors_login_page.*
 
 class DoctorsLoginPage : AppCompatActivity() {
-
+    private var mMyDatabaseHelper:MyDatabaseHelper?=null
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -26,13 +27,17 @@ class DoctorsLoginPage : AppCompatActivity() {
             startActivity(iChoiceDoctorOrPatient)
             finish()
         })
-
+        mMyDatabaseHelper= MyDatabaseHelper(this)
         login_button.setOnClickListener(View.OnClickListener {
-
-            // if login found directly go to landing page
-            // if not found show the popup for quick login with previous login information password required
-            // if nothing found show popup to insert username and password
-            // all will be including guest mode button go to login and go to signup button
+            if(mMyDatabaseHelper!!.readData("CAREGIVERS").count>0) {
+                val iExistingUsers = Intent(this@DoctorsLoginPage, ExistingUsers::class.java)
+                startActivity(iExistingUsers)
+                finish()
+            }else{
+                val iLoginScreen = Intent(this@DoctorsLoginPage, Login::class.java)
+                startActivity(iLoginScreen)
+                finish()
+            }
         })
 
         back_to_splash_screen.setOnClickListener(View.OnClickListener {
@@ -43,7 +48,9 @@ class DoctorsLoginPage : AppCompatActivity() {
 
         signup_button.setOnClickListener(View.OnClickListener {
 
-            // Show popup to insert information for registration
+            val iSignupScreen = Intent(this@DoctorsLoginPage, Signup::class.java)
+            startActivity(iSignupScreen)
+            finish()
 
         })
     }

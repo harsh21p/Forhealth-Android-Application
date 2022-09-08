@@ -42,15 +42,16 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/physiotherapist_login_card"
                 android:layout_width="505px"
                 android:layout_height="662px"
                 android:layout_marginLeft="382px"
-                android:layout_marginTop="59px"
                 app:cardBackgroundColor="#F8F9FC"
                 app:cardCornerRadius="19dp"
                 app:cardElevation="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView2">
 
@@ -168,65 +169,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/physiotherapist_login_card">
 
-                <View
-                    android:id="@+id/ellipse_104"
-                    android:layout_width="19px"
-                    android:layout_height="19px"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:background="@drawable/indicator_not_selected"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <View
-                    android:id="@+id/ellipse_105"
-                    android:layout_width="19px"
-                    android:layout_height="19px"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:background="@drawable/indicator_selected"
-                    app:layout_constraintBottom_toBottomOf="@+id/ellipse_104"
-                    app:layout_constraintStart_toEndOf="@+id/ellipse_104"
-                    app:layout_constraintTop_toTopOf="@+id/ellipse_104"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <View
-                    android:id="@+id/ellipse_106"
-                    android:layout_width="19px"
-                    android:layout_height="19px"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:background="@drawable/indicator_not_selected"
-                    app:layout_constraintBottom_toBottomOf="@+id/ellipse_104"
-                    app:layout_constraintStart_toEndOf="@+id/ellipse_105"
-                    app:layout_constraintTop_toTopOf="@+id/ellipse_104" />
-
-                <View
-                    android:id="@+id/ellipse_107"
-                    android:layout_width="19px"
-                    android:layout_height="19px"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:background="@drawable/indicator_not_selected"
-                    app:layout_constraintBottom_toBottomOf="@+id/ellipse_104"
-                    app:layout_constraintStart_toEndOf="@+id/ellipse_106"
-                    app:layout_constraintTop_toTopOf="@+id/ellipse_104" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

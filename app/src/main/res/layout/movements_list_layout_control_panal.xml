@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="51dp"
+    android:outlineAmbientShadowColor="#5AA4F4"
+    android:outlineSpotShadowColor="#559EED"
+    app:cardBackgroundColor="#EEF0F6"
+    app:cardCornerRadius="10dp"
+    android:layout_gravity="left"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="0dp"
+    app:cardElevation="6dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_movement_view" />
+
+    <TextView
+        android:id="@+id/existing_movement_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="50dp"
+        android:fontFamily="@font/raleway_medium"
+        android:gravity="center"
+        android:text="Movement 1"
+        android:textAlignment="center"
+        android:textColor="#32466A"
+        android:textFontWeight="700"
+        android:textSize="14dp" />
+
+</RelativeLayout>

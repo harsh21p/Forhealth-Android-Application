@@ -12,6 +12,7 @@ import com.example.forhealth.R
 import kotlinx.android.synthetic.main.splash_screen.*
 
 class SplashScreen  : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,7 +53,7 @@ class SplashScreen  : AppCompatActivity() {
 
         // start new animation after given 2 sec
 
-        val splashScreenTimeout = 2000
+        val splashScreenTimeout = 500
         Handler().postDelayed({
 
             get_start_button.visibility= View.VISIBLE

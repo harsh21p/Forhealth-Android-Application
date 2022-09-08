@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "700729002833",
+    "project_id": "forhealth-user-information",
+    "storage_bucket": "forhealth-user-information.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700729002833:android:b7faaeeeb4ef757e9e6170",
+        "android_client_info": {
+          "package_name": "com.example.forhealth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "700729002833-82lqur94ihb06kth7boitr3outm7fdaq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.forhealth",
+            "certificate_hash": "6ff495661ad294bfd59c7ae47b12007d4b520880"
+          }
+        },
+        {
+          "client_id": "700729002833-pindu79ome9jk5ldiu1hia26pf6efh98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPlwuP6SoqhDLsOoErVcwMZqPoJkgJuPA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "700729002833-pindu79ome9jk5ldiu1hia26pf6efh98.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

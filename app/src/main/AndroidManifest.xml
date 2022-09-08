@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.forhealth">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -44,6 +50,85 @@
         // DoctorsLoginPage
 
         <activity android:name="com.example.forhealth.activity.DoctorsLoginPage"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // Login
+
+        <activity android:name="com.example.forhealth.activity.Login"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // Signup
+
+        <activity android:name="com.example.forhealth.activity.Signup"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // ExistingUsers
+
+        <activity android:name="com.example.forhealth.activity.ExistingUsers"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // DoctorsLandingPage
+
+        <activity android:name="com.example.forhealth.activity.DoctorsLandingPage"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // CreateNewPatient
+
+        <activity android:name="com.example.forhealth.activity.CreateNewPatient"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // guest
+        <activity android:name="com.example.forhealth.activity.GuestMode"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // SessionInformation
+
+        <activity android:name="com.example.forhealth.activity.SessionInformation"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // ExistingPatient
+
+        <activity android:name="com.example.forhealth.activity.ExistingPatient"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // PatientProfilePage
+
+        <activity android:name="com.example.forhealth.activity.PatientProfilePage"
+            android:label="ForHealth"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.BaseTheme">
+        </activity>
+
+        // SessionControlPanal
+
+        <activity android:name="com.example.forhealth.activity.SessionControlPanal"
             android:label="ForHealth"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.BaseTheme">

@@ -1,0 +1,3 @@
+package com.example.forhealth.datamodel
+
+data class ModelExercise(val viewType: Int, val movementNo: String, val exerciseType: String, val firstAngle: String, val secondAngle: String, val thirdAngle: String, val repetition:String, val firstMovementSpeed:String, val firstMovementAssistance:String, val firstMovementResistance:String, val firstMovementHoldTime:String, val secondMovementSpeed:String, val secondMovementAssistance:String, val secondMovementResistance:String, val secondMovementHoldTime:String, val firstMovementType:String, val secondMovementType:String, val id:Int)

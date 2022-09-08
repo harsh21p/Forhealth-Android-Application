@@ -7,6 +7,7 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.forhealth.R
+import com.example.forhealth.database.MyDatabaseHelper
 import kotlinx.android.synthetic.main.welcome_page.*
 
 class WelcomePage : AppCompatActivity() {
@@ -14,7 +15,6 @@ class WelcomePage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // hide Top notification bar
-
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,

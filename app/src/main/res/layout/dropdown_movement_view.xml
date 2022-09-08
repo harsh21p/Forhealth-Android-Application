@@ -1,0 +1,16 @@
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/movement_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:text="Name"
+    android:textColor="#46555C"
+    android:textAlignment="center"
+    android:padding="10px"
+    android:textStyle="bold"
+    android:textSize="18px"
+    android:fontFamily="@font/raleway_medium"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
