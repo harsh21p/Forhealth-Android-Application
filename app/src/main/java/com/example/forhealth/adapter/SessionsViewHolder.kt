@@ -3,6 +3,7 @@ package com.example.forhealth.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
@@ -40,10 +41,21 @@ internal class SessionsViewHolder (private var List: List<ModelScheduledSession>
     }
     private inner class View1ViewHolder(itemView: View) :
         MyViewHolder(itemView) {
-        var sessionName: TextView = itemView.findViewById(R.id.session_name_session)
+        var sessionName: TextView = itemView.findViewById<TextView>(R.id.session_name_session)
+        var deleteButton: ImageView = itemView.findViewById<ImageView>(R.id.delete_button)
+
         fun bind(position: Int) {
             val recyclerViewModel = List[position]
             sessionName.text = recyclerViewModel.sessionName
+
+            deleteButton.setOnClickListener(View.OnClickListener {
+
+                val position = adapterPosition
+                if(position!= RecyclerView.NO_POSITION) {
+                    listener.deleteButton(position)
+                }
+
+            })
         }
     }
 }

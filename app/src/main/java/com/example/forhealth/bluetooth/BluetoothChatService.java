@@ -326,8 +326,10 @@ public class BluetoothChatService {
                 try {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
-                    socket = mmServerSocket.accept();
-                } catch (IOException e) {
+
+                        socket = mmServerSocket.accept();
+
+                } catch (Exception e) {
                     Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
                     break;
                 }
@@ -509,6 +511,7 @@ public class BluetoothChatService {
                     byte[] buffer = new byte[1024];
                     int bytes;
                     // Read from the InputStream
+
                     bytes = mmInStream.read(buffer);
 
                     // Send the obtained bytes to the UI Activity

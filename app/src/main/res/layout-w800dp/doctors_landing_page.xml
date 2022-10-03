@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/main_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="MissingDefaultResource">
@@ -20,7 +19,6 @@
         app:srcCompat="@drawable/forhealth_secondary_logo" />
 
 
-
     <RelativeLayout
         android:id="@+id/doctor_profile_image"
         android:layout_width="180dp"
@@ -28,21 +26,20 @@
         android:layout_marginTop="80dp"
         app:layout_constraintEnd_toStartOf="@+id/cardView3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/secondry_logo" >
+        app:layout_constraintTop_toBottomOf="@+id/secondry_logo">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/background_profile_image"
-            />
+            android:src="@drawable/background_profile_image" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="20dp"
+            android:elevation="10dp"
             android:outlineAmbientShadowColor="#5AA4F4"
             android:outlineSpotShadowColor="#559EED"
-            android:elevation="10dp"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="100dp"
             app:cardElevation="10dp">
@@ -52,8 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="15dp"
-                android:src="@drawable/avatar_male"
-                />
+                android:src="@drawable/avatar_male" />
 
         </androidx.cardview.widget.CardView>
 
@@ -110,7 +106,79 @@
 
     </androidx.cardview.widget.CardView>
 
-<!--   MainCardLayout-->
+    <androidx.cardview.widget.CardView
+
+        android:id="@+id/download_button"
+        android:layout_width="268px"
+        android:layout_height="55px"
+        android:layout_marginBottom="50dp"
+        app:cardBackgroundColor="#EEF0F6"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="3dp"
+        app:layout_constraintBottom_toTopOf="@+id/logout_button"
+        app:layout_constraintEnd_toEndOf="@+id/logout_button"
+        app:layout_constraintStart_toStartOf="@+id/logout_button">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/raleway_medium"
+                android:text="Save csv"
+                android:textAlignment="center"
+                android:textColor="#2E476E"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+
+        android:id="@+id/upload_button"
+        android:layout_width="268px"
+        android:layout_height="55px"
+        android:layout_marginBottom="30dp"
+        app:cardBackgroundColor="#EEF0F6"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="3dp"
+        app:layout_constraintBottom_toTopOf="@+id/download_button"
+        app:layout_constraintEnd_toEndOf="@+id/download_button"
+        app:layout_constraintStart_toStartOf="@+id/download_button">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/raleway_medium"
+                android:text="Backup data"
+                android:textAlignment="center"
+                android:textColor="#2E476E"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!--   MainCardLayout-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
@@ -132,6 +200,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             //controls
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/all_controls_card"
                 android:layout_width="wrap_content"
@@ -160,8 +229,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:gravity="center"
                             android:layout_marginTop="30dp"
+                            android:gravity="center"
                             android:orientation="horizontal">
 
                             <androidx.cardview.widget.CardView
@@ -289,13 +358,14 @@
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
+
                                 <TextView
                                     android:id="@+id/motor1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
                                     android:layout_gravity="center"
                                     android:layout_marginTop="20dp"
-                                    android:layout_centerHorizontal="true"
                                     android:fontFamily="@font/raleway_medium"
                                     android:text="Motor Direction"
                                     android:textColor="#46555C"
@@ -541,11 +611,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
+                                android:layout_marginHorizontal="30dp"
+                                android:layout_marginVertical="10dp"
                                 android:fontFamily="@font/raleway_medium"
                                 android:gravity="center"
                                 android:text="Shut down"
-                                android:layout_marginVertical="10dp"
-                                android:layout_marginHorizontal="30dp"
                                 android:textAlignment="center"
                                 android:textColor="#46555C"
                                 android:textFontWeight="700"
@@ -557,6 +627,7 @@
                 </ScrollView>
             </androidx.cardview.widget.CardView>
             //sidebar
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/sidebar"
                 android:layout_width="400dp"
@@ -614,9 +685,10 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/paired_devices_recycler_view"
                         android:layout_width="match_parent"
-                        android:visibility="visible"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="20dp" />
+                        android:layout_marginTop="20dp"
+                        android:visibility="visible" />
+
                     <ProgressBar
                         android:id="@+id/progress_bar"
                         style="?android:attr/progressBarStyle"
@@ -651,6 +723,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
             //main_card
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout2"
                 android:layout_width="wrap_content"
@@ -764,33 +837,33 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal"
                             android:layout_weight="7.5"
-                            >
+                            android:orientation="horizontal">
+
                             <TextView
                                 android:id="@+id/today_date"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center"
                                 android:layout_marginLeft="2dp"
                                 android:fontFamily="@font/raleway_medium"
+                                android:text="01"
                                 android:textColor="#32466A"
                                 android:textSize="35sp"
-                                android:text="01"
-                                android:layout_gravity="center"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/month_and_year"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center"
                                 android:layout_marginLeft="10dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_weight="1"
                                 android:fontFamily="@font/raleway_medium"
+                                android:text="January\n2022"
                                 android:textColor="#7D7D7D"
                                 android:textSize="11sp"
-                                android:layout_marginTop="5dp"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:text="January\n2022"
                                 android:textStyle="bold" />
 
                         </LinearLayout>
@@ -798,30 +871,31 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="vertical"
                             android:layout_weight="2.5"
-                            >
+                            android:orientation="vertical">
+
                             <androidx.cardview.widget.CardView
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
-                                android:elevation="0dp"
-                                app:cardElevation="0dp"
                                 android:layout_marginHorizontal="4dp"
                                 android:layout_marginBottom="4dp"
+                                android:elevation="0dp"
                                 app:cardBackgroundColor="#A4C1CF"
-                                app:cardCornerRadius="19px"/>
+                                app:cardCornerRadius="19px"
+                                app:cardElevation="0dp" />
 
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="left"
+                                android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/raleway_medium"
+                                android:text="TO DO"
                                 android:textColor="#7D7D7D"
                                 android:textSize="12sp"
-                                android:layout_gravity="left"
-                                android:text="TO DO"
-                                android:layout_marginBottom="5dp"
                                 android:textStyle="bold" />
+
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/scheduled_session_recycler"
                                 android:layout_width="match_parent"
@@ -969,7 +1043,7 @@
 
     </androidx.cardview.widget.CardView>
 
-<!--   search_bar-->
+    <!--   search_bar-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
@@ -996,7 +1070,7 @@
 
     </androidx.cardview.widget.CardView>
 
-<!--   dropdown of session-->
+    <!--   dropdown of session-->
 
 
     <androidx.cardview.widget.CardView
@@ -1037,8 +1111,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="72dp"
-        android:src="@drawable/ic_hamburger"
         android:padding="10dp"
+        android:src="@drawable/ic_hamburger"
         app:layout_constraintBottom_toBottomOf="@+id/secondry_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/secondry_logo" />
@@ -1059,8 +1133,8 @@
         android:id="@+id/back_to_splash_screen"
         android:layout_width='40dp'
         android:layout_height='40dp'
-        android:padding='10dp'
         android:layout_marginEnd='30dp'
+        android:padding='10dp'
         app:layout_constraintBottom_toBottomOf="@+id/filter_icon"
         app:layout_constraintEnd_toStartOf="@+id/imageView5"
         app:layout_constraintTop_toTopOf="@+id/filter_icon"

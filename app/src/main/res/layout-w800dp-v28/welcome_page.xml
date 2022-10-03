@@ -5,20 +5,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-<!-- Logo-->
+    <!-- Logo-->
 
     <ImageView
         android:id="@+id/back_to_splash_screen"
-        android:layout_width="29dp"
-        android:layout_height="29dp"
+        android:layout_width="29px"
+        android:layout_height="29px"
         android:layout_marginEnd="29dp"
+        android:layout_marginRight="29dp"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_restore_24"
-        tools:ignore="ContentDescription,VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat" />
 
-<!-- Product Photo-->
+    <!--  Product Photo-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -43,7 +44,7 @@
 
     </androidx.cardview.widget.CardView>
 
-    // Text
+    <!--    // Text-->
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -117,7 +118,42 @@
 
     </RelativeLayout>
 
-    // Proceed Button
+    <!--    // Proceed Button-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="80dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/proceed_button"
+        app:layout_constraintEnd_toStartOf="@+id/proceed_button"
+        app:layout_constraintTop_toTopOf="@+id/proceed_button">
+
+        <CheckBox
+            android:id="@+id/cb_android"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't show again"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="-2dp"
+            android:fontFamily="@font/raleway_medium"
+            android:textAlignment="center"
+            android:textColor="#46555C" />
+
+
+
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
 
@@ -167,6 +203,9 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <!--    // Screen number indicator-->
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

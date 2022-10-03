@@ -1,13 +1,16 @@
 package com.example.forhealth.activity
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
@@ -56,6 +59,7 @@ class SessionInformation: AppCompatActivity() {
         hamburgerVisibilityManager = 1
         speedMeter = null
         chart = null
+        currentExerciseId = 9999
 
         bluetoothSetup()
 
@@ -134,13 +138,47 @@ class SessionInformation: AppCompatActivity() {
 
     }
 
-    fun onExeciseClick(position: Int) {
-        if((exerciseList.size -1 ) == position){
-            val iGuestModePage = Intent(this@SessionInformation, GuestMode::class.java)
+    fun editButton(position: Int) {
+        currentExerciseId = exerciseList[position].id
+        val iGuestModePage = Intent(this@SessionInformation, GuestMode::class.java)
+        startActivity(iGuestModePage)
+        finish()
+    }
+
+    fun deleteButton(position: Int) {
+        currentExerciseId = exerciseList[position].id
+        val view = layoutInflater.inflate(R.layout.custom_dialog_layout_delete,null)
+        dialogueBoxDelete(view,position)
+    }
+
+    fun dialogueBoxDelete(view: View,position: Int) {
+
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+        val  yes = view.findViewById<CardView>(R.id.delete_dialog_yes_button)
+        val  no = view.findViewById<CardView>(R.id.delete_dialog_cancel_button)
+        if(view.parent != null){
+            (view.parent as ViewGroup).removeView(view)
+        }
+        builder.setView(view)
+        yes.setOnClickListener {
+            myDatabaseHelper!!.deleteIntEntry(currentExerciseId.toString(),"EXERCISE_ID","EXERCISES")
+            myDatabaseHelper!!.deleteIntEntry(currentExerciseId.toString(),"EXERCISE_ID_IN_DATA","DATA")
+            exerciseList.removeAt(position)
+            movementViewHolder!!.notifyDataSetChanged()
+            builder.dismiss()
+        }
+        no.setOnClickListener {
+            builder.dismiss()
+        }
+        builder.setCanceledOnTouchOutside(true)
+        builder.show()
+    }
+
+    fun onExerciseClick(position: Int) {
+        if((exerciseList.size - 1) == position) {
+            var iGuestModePage = Intent(this@SessionInformation, GuestMode::class.java)
             startActivity(iGuestModePage)
             finish()
-        }else{
-
         }
     }
 }

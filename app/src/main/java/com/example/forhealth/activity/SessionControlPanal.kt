@@ -1,15 +1,20 @@
 package com.example.forhealth.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
@@ -22,38 +27,14 @@ import com.example.forhealth.common.Common
 import com.example.forhealth.database.MyDatabaseHelper
 import com.example.forhealth.datamodel.ModelExercise
 import com.github.mikephil.charting.animation.Easing
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.Entry
 import kotlinx.android.synthetic.main.session_control_panal.*
-import kotlinx.android.synthetic.main.session_control_panal.all_controls_card
-import kotlinx.android.synthetic.main.session_control_panal.back_button
-import kotlinx.android.synthetic.main.session_control_panal.control_brake_state
-import kotlinx.android.synthetic.main.session_control_panal.control_close
-import kotlinx.android.synthetic.main.session_control_panal.control_direction_anticlockwise
-import kotlinx.android.synthetic.main.session_control_panal.control_direction_clockwise
-import kotlinx.android.synthetic.main.session_control_panal.control_encoder_I
-import kotlinx.android.synthetic.main.session_control_panal.control_encoder_II
-import kotlinx.android.synthetic.main.session_control_panal.control_refresh
-import kotlinx.android.synthetic.main.session_control_panal.control_reset
-import kotlinx.android.synthetic.main.session_control_panal.control_set_home
-import kotlinx.android.synthetic.main.session_control_panal.control_shutdown
-import kotlinx.android.synthetic.main.session_control_panal.control_torque
-import kotlinx.android.synthetic.main.session_control_panal.controls
-import kotlinx.android.synthetic.main.session_control_panal.hamburger
-import kotlinx.android.synthetic.main.session_control_panal.progress_bar
-import kotlinx.android.synthetic.main.session_control_panal.sidebar
-import java.util.ArrayList
 
 class SessionControlPanal : AppCompatActivity() {
 
     private var common:Common?=null
     private var movementViewHolder: MovementViewHolder?=null
-    private var movementList = ArrayList<ModelExercise>()
     private var myDatabaseHelper: MyDatabaseHelper?=null
-    private var currentPosition:Int = 0
-    private var cursor:Cursor?=null
     private var bluetooth:Bluetooth?=null
     private var view:View? = null
 
@@ -68,11 +49,20 @@ class SessionControlPanal : AppCompatActivity() {
         val decorView = window.decorView
         decorView.systemUiVisibility = uiOptions
 
+        mContext = this
+        viewOfNextMovement = layoutInflater.inflate(R.layout.want_to_start_next_movement,null)
+        viewOfAllExercises = layoutInflater.inflate(R.layout.all_exercises_completed,null)
+
         hamburgerVisibilityManager = 1
 
+        movementList!!.clear()
         data_view_card.visibility=View.VISIBLE
 
         common = Common(this)
+
+        currentExerciseId = 9999
+
+        session_name.text = selectedSessionName
 
         bluetooth = Bluetooth(this)
         view = layoutInflater.inflate(R.layout.custom_dialog_layout,null)
@@ -103,9 +93,14 @@ class SessionControlPanal : AppCompatActivity() {
         movementRecyclerView.adapter =  movementViewHolder
 
         back_button.setOnClickListener(View.OnClickListener {
-            val iSessionInformation = Intent(this@SessionControlPanal, SessionInformation::class.java)
-            startActivity(iSessionInformation)
-            finish()
+            if(isClickable) {
+                val iSessionInformation =
+                    Intent(this@SessionControlPanal, SessionInformation::class.java)
+                startActivity(iSessionInformation)
+                finish()
+            }else{
+               alertStop( layoutInflater.inflate(R.layout.stop_alert,null))
+            }
         })
 
         main_layout.setOnClickListener(View.OnClickListener {
@@ -116,16 +111,70 @@ class SessionControlPanal : AppCompatActivity() {
 
         })
 
+        StaticReference.movement_no_session_control = movement_no_session_control
+
+        StaticReference.given_exercise_type = given_exercise_type
+        StaticReference.first_angle_session_control = first_angle_session_control
+        StaticReference.second_angle_session_control = second_angle_session_control
+        StaticReference.third_angle_session_control = third_angle_session_control
+        StaticReference.given_repetition_session_control = given_repetition_session_control
+
+        StaticReference.first_movement_type_session_control = first_movement_type_session_control
+        StaticReference.second_movement_type_session_control = second_movement_type_session_control
+        StaticReference.first_movement_speed_session_control = first_movement_speed_session_control
+        StaticReference.second_movement_speed_session_control = second_movement_speed_session_control
+        StaticReference.first_movement_assistance_session_control = first_movement_assistance_session_control
+        StaticReference.second_movement_assistance_session_control = second_movement_assistance_session_control
+        StaticReference.first_movement_hold_time_session_control = first_movement_hold_time_session_control
+        StaticReference.second_movement_hold_time_session_control = second_movement_hold_time_session_control
+
+        StaticReference.second_movement_assistance_session_control_card = second_movement_assistance_session_control_card
+        StaticReference.second_hold_time_card = second_hold_time_card
+        StaticReference.second_movement_parameter_assistance_and_resistsnce = second_movement_parameter_assistance_and_resistsnce
+
+        StaticReference.first_movement_assistance_session_control_card = first_movement_assistance_session_control_card
+        StaticReference.first_hold_time_card = first_hold_time_card
+        StaticReference.first_movement_parameters_assistance_and_resistance = first_movement_parameters_assistance_and_resistance
+
         setMovements()
         buttonSetting()
+
+    }
+
+    private fun alertStop(view:View) {
+
+            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+            val  yes = view.findViewById<CardView>(R.id.yes_button_stop)
+            val  no = view.findViewById<CardView>(R.id.no_button_stop)
+            if(view.parent != null){
+                (view.parent as ViewGroup).removeView(view)
+            }
+            builder.setView(view)
+            yes.setOnClickListener {
+                if(Connection) {
+                    bluetooth!!.sendMessage("0", this)
+                }else{
+                    Toast.makeText(this,"Device not Connected", Toast.LENGTH_SHORT).show()
+                }
+                startActivity(Intent(this@SessionControlPanal, SessionInformation::class.java))
+                finish()
+                builder.dismiss()
+            }
+
+            no.setOnClickListener {
+                builder.dismiss()
+            }
+            builder.setCanceledOnTouchOutside(true)
+            builder.show()
+
     }
 
     private fun setMovements() {
-        cursor = myDatabaseHelper!!.readDataByStringID(currentSessionId.toString(),"SESSION_ID_IN_EXERCISE","EXERCISES")
+        cursorMovement = myDatabaseHelper!!.readDataByStringID(currentSessionId.toString(),"SESSION_ID_IN_EXERCISE","EXERCISES")
         var i = 1
-        while (cursor!!.moveToNext()){
-            var list = cursor!!.getString(4).split(",")
-            var model = ModelExercise(1,"Movement $i",list[0],list[1],list[2],list[3],list[4],list[5],list[6],list[7],list[8],list[9],list[10],list[11],list[12],list[13],list[14],cursor!!.getInt(0))
+        while (cursorMovement!!.moveToNext()){
+            var list = cursorMovement!!.getString(4).split(",")
+            var model = ModelExercise(1,"Movement $i",list[0],list[1],list[2],list[3],list[4],list[5],list[6],list[7],list[8],list[9],list[10],list[11],list[12],list[13],list[14],cursorMovement!!.getInt(0))
             movementList.add(model)
             i+=1
         }
@@ -140,104 +189,111 @@ class SessionControlPanal : AppCompatActivity() {
         setData()
     }
 
-    private fun setData() {
+    fun setData() {
         try {
-            cursor!!.moveToPosition(currentPosition)
+            cursorMovement!!.moveToPosition(currentPosition)
         }catch (e:Exception){
 
         }
+
         currentExerciseId = movementList[currentPosition].id
 
-        movement_no_session_control.text = movementList[currentPosition].movementNo
+        StaticReference.movement_no_session_control.text = movementList[currentPosition].movementNo
 
-        given_exercise_type.text = movementList[currentPosition].exerciseType
-        first_angle_session_control.text = movementList[currentPosition].firstAngle
-        second_angle_session_control.text = movementList[currentPosition].secondAngle
-        third_angle_session_control.text = movementList[currentPosition].thirdAngle
-        given_repetition_session_control.text = movementList[currentPosition].repetition
+        StaticReference.given_exercise_type.text = movementList[currentPosition].exerciseType
+        StaticReference.first_angle_session_control.text = movementList[currentPosition].firstAngle
+        StaticReference.second_angle_session_control.text = movementList[currentPosition].secondAngle
+        StaticReference.third_angle_session_control.text = movementList[currentPosition].thirdAngle
+        StaticReference.given_repetition_session_control.text = movementList[currentPosition].repetition
 
-        first_movement_type_session_control.text = movementList[currentPosition].firstMovementType
-        second_movement_type_session_control.text = movementList[currentPosition].secondMovementType
-        first_movement_speed_session_control.text = movementList[currentPosition].firstMovementSpeed
-        second_movement_speed_session_control.text = movementList[currentPosition].secondMovementSpeed
-        first_movement_assistance_session_control.text = movementList[currentPosition].firstMovementAssistance
-        second_movement_assistance_session_control.text = movementList[currentPosition].secondMovementAssistance
-        first_movement_hold_time_session_control.text = movementList[currentPosition].firstMovementHoldTime
-        second_movement_hold_time_session_control.text = movementList[currentPosition].secondMovementHoldTime
-
+        StaticReference.first_movement_type_session_control.text = movementList[currentPosition].firstMovementType
+        StaticReference.second_movement_type_session_control.text = movementList[currentPosition].secondMovementType
+        StaticReference.first_movement_speed_session_control.text = movementList[currentPosition].firstMovementSpeed
+        StaticReference.second_movement_speed_session_control.text = movementList[currentPosition].secondMovementSpeed
+        StaticReference.first_movement_assistance_session_control.text = movementList[currentPosition].firstMovementAssistance
+        StaticReference.second_movement_assistance_session_control.text = movementList[currentPosition].secondMovementAssistance
+        StaticReference.first_movement_hold_time_session_control.text = movementList[currentPosition].firstMovementHoldTime
+        StaticReference.second_movement_hold_time_session_control.text = movementList[currentPosition].secondMovementHoldTime
 
         if(movementList[currentPosition].firstMovementType == "PASSIVE"){
-            first_movement_assistance_session_control_card.visibility=View.GONE
-            first_hold_time_card.visibility=View.GONE
-            first_movement_parameters_assistance_and_resistance.visibility=View.GONE
+            StaticReference.first_movement_assistance_session_control_card.visibility=View.GONE
+            StaticReference.first_hold_time_card.visibility=View.GONE
+            StaticReference.first_movement_parameters_assistance_and_resistance.visibility=View.GONE
         }else{
             if(movementList[currentPosition].firstMovementType == "AR ( ISOMETRIC )"){
-                second_movement_assistance_session_control_card.visibility=View.VISIBLE
-                first_movement_parameters_assistance_and_resistance.visibility=View.VISIBLE
-                first_movement_parameters_assistance_and_resistance.text = "Resistance"
-                first_hold_time_card.visibility=View.VISIBLE
+                StaticReference.second_movement_assistance_session_control_card.visibility=View.VISIBLE
+                StaticReference.first_movement_parameters_assistance_and_resistance.visibility=View.VISIBLE
+                StaticReference.first_movement_parameters_assistance_and_resistance.text = "Resistance"
+                StaticReference.first_hold_time_card.visibility=View.VISIBLE
             }else{
-                second_movement_assistance_session_control_card.visibility=View.VISIBLE
-                first_movement_parameters_assistance_and_resistance.visibility=View.VISIBLE
-                first_movement_parameters_assistance_and_resistance.text = "Assistance"
-                first_hold_time_card.visibility=View.GONE
+                StaticReference.second_movement_assistance_session_control_card.visibility=View.VISIBLE
+                StaticReference.first_movement_parameters_assistance_and_resistance.visibility=View.VISIBLE
+                StaticReference.first_movement_parameters_assistance_and_resistance.text = "Assistance"
+                StaticReference.first_hold_time_card.visibility=View.GONE
             }
         }
 
         if(movementList[currentPosition].secondMovementType == "PASSIVE"){
-            second_movement_assistance_session_control_card.visibility=View.GONE
-            second_hold_time_card.visibility=View.GONE
-            second_movement_parameter_assistance_and_resistsnce.visibility=View.GONE
+            StaticReference.second_movement_assistance_session_control_card.visibility=View.GONE
+            StaticReference.second_hold_time_card.visibility=View.GONE
+            StaticReference.second_movement_parameter_assistance_and_resistsnce.visibility=View.GONE
         }else{
             if(movementList[currentPosition].secondMovementType == "AR ( ISOMETRIC )"){
-                second_movement_assistance_session_control_card.visibility=View.VISIBLE
-                second_movement_parameter_assistance_and_resistsnce.visibility=View.VISIBLE
-                second_movement_parameter_assistance_and_resistsnce.text = "Resistance"
-                second_hold_time_card.visibility=View.VISIBLE
+                StaticReference.second_movement_assistance_session_control_card.visibility=View.VISIBLE
+                StaticReference.second_movement_parameter_assistance_and_resistsnce.visibility=View.VISIBLE
+                StaticReference.second_movement_parameter_assistance_and_resistsnce.text = "Resistance"
+                StaticReference.second_hold_time_card.visibility=View.VISIBLE
             }else{
-                second_movement_assistance_session_control_card.visibility=View.VISIBLE
-                second_movement_parameter_assistance_and_resistsnce.visibility=View.VISIBLE
-                second_movement_parameter_assistance_and_resistsnce.text = "Assistance"
-                second_hold_time_card.visibility=View.GONE
+                StaticReference.second_movement_assistance_session_control_card.visibility=View.VISIBLE
+                StaticReference.second_movement_parameter_assistance_and_resistsnce.visibility=View.VISIBLE
+                StaticReference.second_movement_parameter_assistance_and_resistsnce.text = "Assistance"
+                StaticReference.second_hold_time_card.visibility=View.GONE
             }
         }
 
     }
 
+
     @SuppressLint("MissingPermission")
     private fun buttonSetting(){
 
         playpause.setOnClickListener(View.OnClickListener {
-            controls.visibility=View.GONE
-            if(Connection){
-                controls.visibility = View.VISIBLE
-                bluetooth!!.sendMessage("1,"+cursor!!.getString(4),this)
-                Toast.makeText(this,"Processing...",Toast.LENGTH_SHORT).show()
-                playpause.isClickable=false
-            }else {
-                if (hamburgerVisibilityManager == 1) {
-                    if (!mBtAdapter.isEnabled) {
-                        sidebar.visibility=View.GONE
-                        hamburgerVisibilityManager = 1
-                        var bluetoothintent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                        startActivity(bluetoothintent)
-                    } else {
-                        sidebar.visibility = View.VISIBLE
-                        hamburgerVisibilityManager = 0
-                    }
-                    all_controls_card.visibility = View.GONE
+            if(isClickable) {
+                controls.visibility = View.GONE
+                if (Connection) {
+                    controls.visibility = View.VISIBLE
+                    bluetooth!!.sendMessage("1," + cursorMovement!!.getString(4), this)
+                    Toast.makeText(this, "Processing...", Toast.LENGTH_SHORT).show()
                 } else {
-                    sidebar.visibility = View.GONE
-                    all_controls_card.visibility = View.GONE
-                    hamburgerVisibilityManager = 1
+
+                    controls.visibility = View.GONE
+
+                    mBtAdapter = BluetoothAdapter.getDefaultAdapter()
+                    if (hamburgerVisibilityManager == 1) {
+                        if (!mBtAdapter.isEnabled) {
+                            var bluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                            ContextCompat.startActivity(this, bluetoothIntent, null)
+                            common!!.findPairedDevices()
+                        } else {
+                            common!!.findPairedDevices()
+                        }
+                        sidebar.visibility = View.VISIBLE
+                        all_controls_card.visibility = View.GONE
+                        hamburgerVisibilityManager = 0
+                    } else {
+                        sidebar.visibility = View.GONE
+                        all_controls_card.visibility = View.GONE
+                        hamburgerVisibilityManager = 1
+                    }
                 }
+            }else{
+                Toast.makeText(this,"Already is use",Toast.LENGTH_SHORT).show()
             }
         })
 
         stopsession.setOnClickListener(View.OnClickListener {
             if(Connection) {
                 bluetooth!!.sendMessage("0", this)
-                playpause.isClickable = true
             }else{
                 Toast.makeText(this,"Device not Connected", Toast.LENGTH_SHORT).show()
             }
@@ -266,6 +322,11 @@ class SessionControlPanal : AppCompatActivity() {
         chart = lineChart
         StaticReference.speedMeter = speedMeter
         currentRepetition = repetition_completed_session_control
+
+        feedBack = feedback
+        angleValue = angle_value
+        speedValue = speed_value
+        torqueValue = torque_value
 
         inputPageConnection = 2
 

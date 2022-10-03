@@ -148,7 +148,7 @@
                         android:layout_marginBottom="0dp"
                         android:fontFamily="@font/raleway_medium"
                         android:padding="5dp"
-                        android:text="Avatar"
+                        android:text="Choose your Avatar"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
@@ -184,6 +184,7 @@
                             android:layout_marginTop="38dp"
                             android:background="@drawable/round_border_background"
                             android:hint="Dr."
+                            android:maxLength="3"
                             android:gravity="center"
                             android:layout_marginRight="10dp"
                             android:inputType="textEmailAddress"
@@ -264,7 +265,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/round_border_background"
                             android:gravity="center"
-                            android:inputType="number"
+                            android:inputType="numberPassword"
                             android:maxLength="1"
                             android:paddingVertical="15dp" />
 
@@ -277,7 +278,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/round_border_background"
                             android:gravity="center"
-                            android:inputType="number"
+                            android:inputType="numberPassword"
                             android:maxLength="1"
                             android:paddingVertical="15dp" />
 
@@ -290,7 +291,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/round_border_background"
                             android:gravity="center"
-                            android:inputType="number"
+                            android:inputType="numberPassword"
                             android:maxLength="1"
                             android:paddingVertical="15dp" />
 
@@ -303,7 +304,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/round_border_background"
                             android:gravity="center"
-                            android:inputType="number"
+                            android:inputType="numberPassword"
                             android:maxLength="1"
                             android:paddingVertical="15dp" />
 
@@ -327,7 +328,7 @@
                     android:elevation="1dp"
                     app:cardBackgroundColor="#E7EBF6"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="1dp">
+                    app:cardElevation="3dp">
 
                     <ProgressBar
                         android:id="@+id/progress_bar_signup"
@@ -336,8 +337,7 @@
                         android:visibility="gone"
                         tools:layout_editor_absoluteX="643dp"
                         tools:layout_editor_absoluteY="376dp"
-                        android:layout_gravity="center
-"
+                        android:layout_gravity="center"
                         />
 
                     <TextView

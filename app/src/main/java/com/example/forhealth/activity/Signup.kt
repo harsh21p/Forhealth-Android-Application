@@ -2,13 +2,16 @@ package com.example.forhealth.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.example.forhealth.R
 import com.example.forhealth.bluetooth.StaticReference.selectedAvatar
 import com.example.forhealth.common.Common
@@ -128,15 +131,28 @@ class Signup : AppCompatActivity() {
                                     if(task.isSuccessful) {
                                         localRef!!.child("Email").setValue(email).addOnCompleteListener { task ->
                                             if (task.isSuccessful) {
-                                                localRef!!.child("Name").setValue(idEdtUserName.text.toString()).addOnCompleteListener { task ->
+                                                localRef!!.child("Name").setValue(idEdtUserNamePre.text.toString()+" "+idEdtUserName.text.toString()).addOnCompleteListener { task ->
                                                     if (task.isSuccessful) {
                                                         localRef!!.child("Avatar").setValue(selectedAvatar).addOnCompleteListener { task ->
                                                             if(task.isSuccessful) {
+
                                                                 progress_bar_signup.visibility = View.GONE
                                                                 signup_button_text.visibility = View.VISIBLE
                                                                 auth.signOut()
-                                                                startActivity(iLoginScreen)
-                                                                finish()
+
+                                                                val view = layoutInflater.inflate(R.layout.msg_dilog,null)
+                                                                val msg = view.findViewById<TextView>(R.id.string_for_dilog)
+                                                                msg.text = "Signup successful."
+
+                                                                common.textDilog(view)
+
+                                                                val splashScreenTimeout = 2500
+                                                                Handler().postDelayed({
+                                                                    startActivity(iLoginScreen)
+                                                                    finish()
+                                                                }, splashScreenTimeout.toLong())
+
+
                                                             }
                                                         }
 
@@ -147,7 +163,13 @@ class Signup : AppCompatActivity() {
                                     }
                                 }
                             } catch (e: Exception) {
-                                Toast.makeText(this, "Something went wrong please contact support ", Toast.LENGTH_LONG).show()
+
+                            val view = layoutInflater.inflate(R.layout.msg_dilog,null)
+                            val msg = view.findViewById<TextView>(R.id.string_for_dilog)
+                            msg.text = e.toString().split(":")[1]
+                            common.textDilog(view)
+                            common.textDilog(view)
+//                                Toast.makeText(this, "Something went wrong please contact support ", Toast.LENGTH_LONG).show()
                                 progress_bar_signup.visibility = View.GONE
                                 signup_button_text.visibility = View.VISIBLE
                                 auth.signOut()
@@ -156,7 +178,11 @@ class Signup : AppCompatActivity() {
                 }.addOnFailureListener { exception ->
                     progress_bar_signup.visibility=View.GONE
                     signup_button_text.visibility=View.VISIBLE
-                    Toast.makeText(this, "Something went wrong ($exception)", Toast.LENGTH_LONG).show()
+                    val view = layoutInflater.inflate(R.layout.msg_dilog,null)
+                    val msg = view.findViewById<TextView>(R.id.string_for_dilog)
+                    msg.text = exception.toString().split(":")[1]
+                    common.textDilog(view)
+//                    Toast.makeText(this, "Something went wrong ($exception)", Toast.LENGTH_LONG).show()
                 }
             }
         })

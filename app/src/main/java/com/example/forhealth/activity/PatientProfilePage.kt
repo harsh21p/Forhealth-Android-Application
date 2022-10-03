@@ -5,6 +5,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -15,33 +16,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
 import com.example.forhealth.adapter.PairedDevicesViewHolder
 import com.example.forhealth.adapter.SessionsViewHolder
-import com.example.forhealth.bluetooth.StaticReference
 import com.example.forhealth.bluetooth.StaticReference.*
 import com.example.forhealth.common.Common
 import com.example.forhealth.database.MyDatabaseHelper
 import com.example.forhealth.datamodel.ModelScheduledSession
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.patient_profile_page.*
-import kotlinx.android.synthetic.main.patient_profile_page.all_controls_card
-import kotlinx.android.synthetic.main.patient_profile_page.back_button
-import kotlinx.android.synthetic.main.patient_profile_page.control_brake_state
-import kotlinx.android.synthetic.main.patient_profile_page.control_close
-import kotlinx.android.synthetic.main.patient_profile_page.control_direction_anticlockwise
-import kotlinx.android.synthetic.main.patient_profile_page.control_direction_clockwise
-import kotlinx.android.synthetic.main.patient_profile_page.control_encoder_I
-import kotlinx.android.synthetic.main.patient_profile_page.control_encoder_II
-import kotlinx.android.synthetic.main.patient_profile_page.control_refresh
-import kotlinx.android.synthetic.main.patient_profile_page.control_reset
-import kotlinx.android.synthetic.main.patient_profile_page.control_set_home
-import kotlinx.android.synthetic.main.patient_profile_page.control_shutdown
-import kotlinx.android.synthetic.main.patient_profile_page.control_torque
-import kotlinx.android.synthetic.main.patient_profile_page.controls
-import kotlinx.android.synthetic.main.patient_profile_page.hamburger
-import kotlinx.android.synthetic.main.patient_profile_page.patient_name
-import kotlinx.android.synthetic.main.patient_profile_page.progress_bar
-import kotlinx.android.synthetic.main.patient_profile_page.sidebar
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class PatientProfilePage : AppCompatActivity() {
 
@@ -72,6 +55,11 @@ class PatientProfilePage : AppCompatActivity() {
         currentSessionId = 9999
         speedMeter = null
         chart = null
+
+        delete_button.setOnClickListener(View.OnClickListener {
+            val view = layoutInflater.inflate(R.layout.custom_dialog_layout_delete,null)
+            dialogueBoxDelete(view,9999)
+        })
 
         myDatabaseHelper = MyDatabaseHelper(this)
         bluetoothSetup()
@@ -188,6 +176,9 @@ class PatientProfilePage : AppCompatActivity() {
         }
 
         patient_name.text = cursor.getString(2)
+        patient_age.text = cursor.getString(5)
+        patient_contact.text = cursor.getString(7)
+        patient_weight.text = cursor.getString(4)
     }
 
     private fun bluetoothSetup() {
@@ -216,5 +207,57 @@ class PatientProfilePage : AppCompatActivity() {
         val iGuestMode = Intent(this@PatientProfilePage, SessionInformation::class.java)
         startActivity(iGuestMode)
         finish()
+    }
+
+    fun deleteButton(position: Int) {
+        currentSessionId = sessionList[position].sessionId
+        val view = layoutInflater.inflate(R.layout.custom_dialog_layout_delete,null)
+        dialogueBoxDelete(view,position)
+    }
+
+    fun dialogueBoxDelete(view: View,position: Int) {
+
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+        val  yes = view.findViewById<CardView>(R.id.delete_dialog_yes_button)
+        val  no = view.findViewById<CardView>(R.id.delete_dialog_cancel_button)
+        if(view.parent != null){
+            (view.parent as ViewGroup).removeView(view)
+        }
+        builder.setView(view)
+        yes.setOnClickListener {
+            if(position != 9999) {
+                myDatabaseHelper!!.deleteIntEntry(currentSessionId.toString(),
+                    "SESSIONS_ID",
+                    "SESSIONS")
+                myDatabaseHelper!!.deleteIntEntry(currentSessionId.toString(),
+                    "SESSION_ID_IN_DATA",
+                    "DATA")
+                sessionList.removeAt(position)
+                sessionsAdapter.notifyDataSetChanged()
+            }else{
+                myDatabaseHelper!!.deleteIntEntry(selectedPatientId.toString(),
+                    "PATIENT_ID",
+                    "PATIENTS")
+                myDatabaseHelper!!.deleteIntEntry(selectedPatientId.toString(),
+                    "PATIENT_ID_IN_EXERCISE",
+                    "EXERCISES")
+                myDatabaseHelper!!.deleteIntEntry(selectedPatientId.toString(),
+                    "PATIENT_ID_IN_SESSIONS",
+                    "SESSIONS")
+                myDatabaseHelper!!.deleteIntEntry(selectedPatientId.toString(),
+                    "PATIENT_ID_IN_DATA",
+                    "DATA")
+
+                val iListOfPatients = Intent(this, ExistingPatient::class.java)
+                startActivity(iListOfPatients)
+                finish()
+            }
+            builder.dismiss()
+        }
+        no.setOnClickListener {
+            builder.dismiss()
+        }
+        builder.setCanceledOnTouchOutside(true)
+        builder.show()
     }
 }

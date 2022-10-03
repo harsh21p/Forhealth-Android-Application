@@ -1,14 +1,23 @@
 package com.example.forhealth.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.CalendarView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,33 +26,25 @@ import com.example.forhealth.adapter.PairedDevicesViewHolder
 import com.example.forhealth.adapter.ScheduledSessionViewHolder
 import com.example.forhealth.bluetooth.StaticReference.*
 import com.example.forhealth.common.Common
+import com.example.forhealth.database.CSVWriter
 import com.example.forhealth.database.MyDatabaseHelper
 import com.example.forhealth.datamodel.ModelScheduledSession
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.doctors_landing_page.*
-import kotlinx.android.synthetic.main.doctors_landing_page.all_controls_card
-import kotlinx.android.synthetic.main.doctors_landing_page.control_brake_state
-import kotlinx.android.synthetic.main.doctors_landing_page.control_close
-import kotlinx.android.synthetic.main.doctors_landing_page.control_direction_anticlockwise
-import kotlinx.android.synthetic.main.doctors_landing_page.control_direction_clockwise
-import kotlinx.android.synthetic.main.doctors_landing_page.control_encoder_I
-import kotlinx.android.synthetic.main.doctors_landing_page.control_encoder_II
-import kotlinx.android.synthetic.main.doctors_landing_page.control_refresh
-import kotlinx.android.synthetic.main.doctors_landing_page.control_reset
-import kotlinx.android.synthetic.main.doctors_landing_page.control_set_home
-import kotlinx.android.synthetic.main.doctors_landing_page.control_shutdown
-import kotlinx.android.synthetic.main.doctors_landing_page.control_torque
-import kotlinx.android.synthetic.main.doctors_landing_page.controls
-import kotlinx.android.synthetic.main.doctors_landing_page.hamburger
-import kotlinx.android.synthetic.main.doctors_landing_page.progress_bar
-import kotlinx.android.synthetic.main.doctors_landing_page.sidebar
+import java.io.File
+import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class DoctorsLandingPage : AppCompatActivity() {
     private var mMyDatabaseHelper: MyDatabaseHelper?=null
     private var scheduledSessionList = ArrayList<ModelScheduledSession>()
     private val scheduledSessionsAdapter =  ScheduledSessionViewHolder(scheduledSessionList,this)
     private val common = Common(this)
+    private var doctorEmail:String?=null
+    private var db = FirebaseFirestore.getInstance()
+
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,11 +119,43 @@ class DoctorsLandingPage : AppCompatActivity() {
                 hamburgerVisibilityManager = 1
             }
         })
+
+        download_button.setOnClickListener(View.OnClickListener {
+            exportDB()
+        })
+
+        upload_button.setOnClickListener(View.OnClickListener {
+
+
+            val dataOfDoctors = hashMapOf(
+                "Text" to "",
+                "Status" to ""
+            )
+            val dataOfPatient = hashMapOf(
+                "Name" to "",
+                "Year" to "",
+                "Enrollment" to ""
+            )
+
+            var firstCollection = db.collection("Doctors").document(doctorEmail!!)
+            var secondCollection = db.collection("Doctors").document(doctorEmail!!).collection("Patients").document()
+
+            firstCollection.set(dataOfDoctors)
+                .addOnSuccessListener {
+
+                    secondCollection.set(dataOfPatient)
+                        .addOnSuccessListener {
+                            Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(ContentValues.TAG, "Error writing document", e)
+                        }
+                }
+                .addOnFailureListener { e -> Log.w(
+                    ContentValues.TAG, "Error writing document", e) }
+        })
     }
 
-    fun getSqlToExcel(){
-//        val sqliteToExcel = SqliteToExcel(this, "helloworld.db")
-    }
 
     private fun calenderSettings() {
         var date:String?=null
@@ -161,7 +194,8 @@ class DoctorsLandingPage : AppCompatActivity() {
         cursor.moveToFirst()
 
         try {
-            doctor_name.text="Dr. "+cursor.getString(1)
+            doctorEmail = cursor.getString(3)
+            doctor_name.text = cursor.getString(1)
             if(cursor.getString(4).toInt()==0)
             {
                 doctor_profile_picture.setImageDrawable(
@@ -248,4 +282,154 @@ class DoctorsLandingPage : AppCompatActivity() {
     fun onItemClick(position: Int) {
 
     }
+
+    private fun exportDB() {
+        if(isExternalStorageWritable()) {
+            askForPermission()
+
+            val view = layoutInflater.inflate(R.layout.custom_dialog_layout_data_save,null)
+            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+            builder.setView(view)
+            builder.setCanceledOnTouchOutside(false)
+            builder.show()
+
+            val exportDir = File(Environment.getExternalStorageDirectory(), "Forhealth")
+            if (!exportDir.exists()) {
+                exportDir.mkdirs()
+            }
+            val file1 = File(exportDir, "forhealth_data_table_$doctorEmail.csv")
+            val file2 = File(exportDir, "forhealth_exercises_table_$doctorEmail.csv")
+            val file3 = File(exportDir, "forhealth_sessions_table_$doctorEmail.csv")
+            val file4 = File(exportDir, "forhealth_patients_table_$doctorEmail.csv")
+            val file5 = File(exportDir, "forhealth_caregivers_table_$doctorEmail.csv")
+            try {
+                file1.createNewFile()
+                val csvWrite1 = CSVWriter(FileWriter(file1))
+                val csvWrite2 = CSVWriter(FileWriter(file2))
+                val csvWrite3 = CSVWriter(FileWriter(file3))
+                val csvWrite4 = CSVWriter(FileWriter(file4))
+                val csvWrite5 = CSVWriter(FileWriter(file5))
+
+
+                val curCSV1 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_DATA","DATA")
+                val curCSV2 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_EXERCISE","EXERCISES")
+                val curCSV3 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_SESSIONS","SESSIONS")
+                val curCSV4 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_PATIENT","PATIENTS")
+                val curCSV5 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID","CAREGIVERS")
+
+                csvWrite1.writeNext(curCSV1.columnNames)
+                while (curCSV1.moveToNext()) {
+                    val arrStr = arrayOf(curCSV1.getString(0),
+                        curCSV1.getString(1),
+                        curCSV1.getString(2),
+                        curCSV1.getString(3),
+                        curCSV1.getString(4),
+                        curCSV1.getString(5),
+                        curCSV1.getString(6),
+                        curCSV1.getString(7))
+                    csvWrite1.writeNext(arrStr)
+                    Log.e("CSV", "Writing...")
+                }
+
+                csvWrite1.close()
+                curCSV1.close()
+
+                csvWrite2.writeNext(curCSV2.columnNames)
+                while (curCSV2.moveToNext()) {
+                    val arrStr = arrayOf(curCSV2.getString(0),
+                        curCSV2.getString(1),
+                        curCSV2.getString(2),
+                        curCSV2.getString(3),
+                        curCSV2.getString(4),
+                        curCSV2.getString(5),
+                        curCSV2.getString(6),
+                        curCSV2.getString(7))
+                    csvWrite2.writeNext(arrStr)
+                    Log.e("CSV", "Writing...")
+                }
+
+
+                csvWrite2.close()
+                curCSV2.close()
+
+                csvWrite3.writeNext(curCSV3.columnNames)
+                while (curCSV3.moveToNext()) {
+                    val arrStr = arrayOf(curCSV3.getString(0),
+                        curCSV3.getString(1),
+                        curCSV3.getString(2),
+                        curCSV3.getString(3),
+                        curCSV3.getString(4),
+                        curCSV3.getString(5),
+                        curCSV3.getString(6))
+                    csvWrite3.writeNext(arrStr)
+                    Log.e("CSV", "Writing...")
+                }
+
+                csvWrite3.close()
+                curCSV3.close()
+
+                csvWrite4.writeNext(curCSV4.columnNames)
+                while (curCSV4.moveToNext()) {
+                    val arrStr = arrayOf(curCSV4.getString(0),
+                        curCSV4.getString(1),
+                        curCSV4.getString(2),
+                        curCSV4.getString(3),
+                        curCSV4.getString(4),
+                        curCSV4.getString(5),
+                        curCSV4.getString(6),
+                        curCSV4.getString(7),
+                        curCSV4.getString(8))
+                    csvWrite4.writeNext(arrStr)
+                    Log.e("CSV", "Writing...")
+                }
+
+                csvWrite4.close()
+                curCSV4.close()
+
+                csvWrite5.writeNext(curCSV5.columnNames)
+                while (curCSV5.moveToNext()) {
+                    val arrStr = arrayOf(curCSV5.getString(0),
+                        curCSV5.getString(1),
+                        "XXXX",
+                        curCSV5.getString(3),
+                        curCSV5.getString(4))
+                    csvWrite5.writeNext(arrStr)
+                    Log.e("CSV", "Writing...")
+                }
+
+                csvWrite5.close()
+                curCSV5.close()
+
+                val sTimeout = 1000
+                Handler().postDelayed({
+                    builder.dismiss()
+                    Toast.makeText(this,"Done!",Toast.LENGTH_SHORT).show()
+
+                },sTimeout.toLong())
+                Log.e("CSV", "Writing Done!")
+
+            } catch (sqlEx: Exception) {
+                Log.e("CSV", sqlEx.message, sqlEx)
+            }
+        }else{
+            askForPermission()
+            Log.e("CSV", "Need permission")
+        }
+    }
+
+    private fun askForPermission(){
+        if (Build.VERSION.SDK_INT >= 30) {
+            if (!Environment.isExternalStorageManager()) {
+                val getPermission = Intent()
+                getPermission.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                startActivity(getPermission)
+            }
+        }
+    }
+
+    private fun isExternalStorageWritable(): Boolean {
+        val state = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED == state
+    }
+
 }

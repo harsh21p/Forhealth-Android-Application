@@ -61,7 +61,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/txtnext"
+            android:id="@+id/session_name"
             android:layout_width="289px"
             android:layout_height="70px"
             android:layout_gravity="center_horizontal"
@@ -196,8 +196,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:layout_weight="1"
-                    >
+                    android:layout_weight="1">
                     <TextView
                         android:id="@+id/feedback"
                         android:layout_width="match_parent"
@@ -212,9 +211,7 @@
                         android:textAlignment="center"
                         android:textColor="#F44336"
                         android:textFontWeight="600"
-                        android:textSize="17dp"
-                        />
-
+                        android:textSize="17dp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -967,7 +964,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:elevation="1dp"
-                                    android:visibility="invisible"
+                                    android:visibility="visible"
                                     android:layout_gravity="center"
                                     app:cardBackgroundColor="#FBFBFB"
                                     app:cardCornerRadius="10dp"
@@ -1049,7 +1046,7 @@
                                                 android:textSize="25dp" />
 
                                             <TextView
-                                                android:id="@+id/anglevalue"
+                                                android:id="@+id/angle_value"
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
                                                 android:layout_centerInParent="true"
@@ -1123,7 +1120,7 @@
                                                                 app:cardElevation="0dp">
 
                                                                 <TextView
-                                                                    android:id="@+id/tourgevalue"
+                                                                    android:id="@+id/torque_value"
                                                                     android:layout_width="match_parent"
                                                                     android:layout_height="match_parent"
                                                                     android:layout_gravity="center"
@@ -1157,7 +1154,7 @@
                                                                 app:cardElevation="0dp">
 
                                                                 <TextView
-                                                                    android:id="@+id/speedvalue"
+                                                                    android:id="@+id/speed_value"
                                                                     android:layout_width="match_parent"
                                                                     android:layout_height="match_parent"
                                                                     android:layout_gravity="center"

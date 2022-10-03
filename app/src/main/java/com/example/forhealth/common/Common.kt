@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Message
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +22,7 @@ import com.example.forhealth.bluetooth.StaticReference.*
 import com.example.forhealth.datamodel.ModelPairedDevices
 import kotlinx.android.synthetic.main.doctors_landing_page.*
 import kotlinx.android.synthetic.main.signup.*
+import kotlinx.android.synthetic.main.splash_screen.*
 
 
 class Common(context: Context){
@@ -85,7 +88,7 @@ class Common(context: Context){
             builder.dismiss()
 
         }
-        builder.setCanceledOnTouchOutside(false)
+        builder.setCanceledOnTouchOutside(true)
         builder.show()
 
     }
@@ -187,8 +190,9 @@ class Common(context: Context){
         }
     }
 
-    fun setClickForControls(view: View,sidebar: CardView,all_controls_card: CardView,controls: CardView,control_shutdown:CardView,control_reset:CardView
-    ,control_set_home:CardView,control_close:CardView,control_direction_clockwise:CardView,control_direction_anticlockwise:CardView,control_brake_state:Switch,control_refresh:CardView){
+    @SuppressLint("ClickableViewAccessibility")
+    fun setClickForControls(view: View, sidebar: CardView, all_controls_card: CardView, controls: CardView, control_shutdown:CardView, control_reset:CardView
+                            , control_set_home:CardView, control_close:CardView, control_direction_clockwise:CardView, control_direction_anticlockwise:CardView, control_brake_state:Switch, control_refresh:CardView){
 
         controls.setOnClickListener(View.OnClickListener {
             if(StaticReference.Connection){
@@ -311,6 +315,20 @@ class Common(context: Context){
         builder.show()
     }
 
+    fun textDilog(view:View) {
+
+        val builder = AlertDialog.Builder(mContext, R.style.CustomAlertDialog).create()
+        builder.setView(view)
+        builder.setCanceledOnTouchOutside(true)
+        builder.show()
+
+        val splashScreenTimeout = 2500
+        Handler().postDelayed({
+            builder.dismiss()
+        }, splashScreenTimeout.toLong())
+
+
+    }
 
 
 }

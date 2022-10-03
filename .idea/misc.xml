@@ -11,6 +11,7 @@
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable-v24/indicator_selected.xml" value="0.174" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable-v24/rounded_corner.xml" value="0.174" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable/ic_baseline_bluetooth_24.xml" value="0.1365" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable/ic_baseline_delete_forever_24.xml" value="0.2735" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable/ic_baseline_forward_10_24.xml" value="0.1355" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable/ic_filter.xml" value="0.246" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable/ic_hamburger.xml" value="0.246" />
@@ -19,28 +20,32 @@
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable/ic_preview_icon.xml" value="0.2085" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable/round_border_background.xml" value="0.12" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-v28/existing_users_add_button_layout.xml" value="0.25" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp-v28/welcome_page.xml" value="0.1055" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp-v28/welcome_page.xml" value="0.264" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/choice_doctor_or_patient.xml" value="0.17142857142857143" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/create_new_patient.xml" value="0.2" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/doctors_landing_page.xml" value="0.264" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/doctors_landing_page.xml" value="0.2" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/doctors_login_page.xml" value="0.136" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/existing_patient.xml" value="0.176" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/existing_users.xml" value="0.2" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/guest_mode.xml" value="0.2" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/login_page.xml" value="0.2" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/patient_profile_page.xml" value="0.2" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/session_control_panal.xml" value="0.18259803921568626" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/sessons_information.xml" value="0.30416666666666664" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/signup.xml" value="0.264" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/forgot_password.xml" value="0.4" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/guest_mode.xml" value="0.152" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/login_page.xml" value="0.264" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/patient_profile_page.xml" value="0.4" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/session_control_panal.xml" value="0.176" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/sessons_information.xml" value="0.176" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/signup.xml" value="0.5009276437847866" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/splash_screen.xml" value="0.17142857142857143" />
-        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/welcome_page.xml" value="0.17142857142857143" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout-w800dp/welcome_page.xml" value="0.264" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/add_movement_layout.xml" value="0.20104166666666667" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/all_exercises_completed.xml" value="0.2734375" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/bluetooth_paired_devices_layout.xml" value="0.27447916666666666" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/choice_doctor_or_patient.xml" value="0.25" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/create_new_patient.xml" value="0.2635" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/create_session_view.xml" value="0.27447916666666666" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/custom_dialog_layout.xml" value="0.25" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/custom_dialog_layout_avatar.xml" value="0.1796875" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/custom_dialog_layout_data_save.xml" value="0.264" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/custom_dialog_layout_delete.xml" value="0.14270833333333333" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/custom_dialog_layout_shutdown.xml" value="0.2734375" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/custom_dialog_login_pin.xml" value="0.25" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/doctors_landing_page.xml" value="0.24" />
@@ -51,14 +56,21 @@
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/existing_users.xml" value="0.1078125" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/existing_users_add_button_layout.xml" value="0.24895833333333334" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/existing_users_layout.xml" value="0.239" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/forgot_password.xml" value="0.27447916666666666" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/guest_mode.xml" value="0.27447916666666666" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/movement_view_layout.xml" value="0.27447916666666666" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/movements_list_layout_control_panal.xml" value="0.27447916666666666" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/msg_dilog.xml" value="0.14270833333333333" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/patient_avatar_layout.xml" value="0.264" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/patient_profile_page.xml" value="0.2734375" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/scheduled_session_layout.xml" value="0.20104166666666667" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/session_dropdown_view.xml" value="0.2734375" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/sessons_information.xml" value="0.27447916666666666" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/show_sessions.xml" value="0.27447916666666666" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/signup.xml" value="0.176" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/splash_screen.xml" value="0.25" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/stop_alert.xml" value="0.2734375" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/want_to_start_next_movement.xml" value="0.2734375" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/layout/welcome_page.xml" value="0.25" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/mipmap-hdpi/ic_launcher.xml" value="0.246" />
         <entry key="..\:/Harshad1/Forhealth-Android-Application/app/src/main/res/drawable/ic_movement_view.xml" value="0.2285" />
@@ -90,7 +102,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

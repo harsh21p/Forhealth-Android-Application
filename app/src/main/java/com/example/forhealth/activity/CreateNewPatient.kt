@@ -38,6 +38,7 @@ import kotlinx.android.synthetic.main.create_new_patient.patient_name
 import kotlinx.android.synthetic.main.create_new_patient.patient_weight
 import kotlinx.android.synthetic.main.create_new_patient.progress_bar
 import kotlinx.android.synthetic.main.create_new_patient.sidebar
+import kotlinx.android.synthetic.main.patient_profile_page.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -100,7 +101,7 @@ class CreateNewPatient : AppCompatActivity() {
         }else{
             val currentDateTime: String = sdf.format(Date())
             val currentDate = currentDateTime.split('_')
-            var  result = myDatabaseHelper!!.addDataToPatients(selectedPatientAvatar.toString(),mAuthString.toString(),patient_weight.text.toString(),patient_weight.text.toString(),patient_name.text!!.toString(),patient_gender.text.toString(),currentDate[0],patient_contact.text.toString())
+            var  result = myDatabaseHelper!!.addDataToPatients(selectedPatientAvatar.toString(),mAuthString.toString(),patient_weight.text.toString(),patient_age.text.toString(),patient_name.text!!.toString(),patient_gender.text.toString(),currentDate[0],patient_contact.text.toString())
             Toast.makeText(this,result,Toast.LENGTH_SHORT).show()
             val iExistingPatient= Intent(this@CreateNewPatient, ExistingPatient::class.java)
             startActivity(iExistingPatient)
@@ -111,22 +112,22 @@ class CreateNewPatient : AppCompatActivity() {
 
     private fun bluetoothSetup() {
 
-        StaticReference.aSwitch = control_brake_state
-        StaticReference.torque = control_torque
-        StaticReference.angle = control_encoder_I
-        StaticReference.speed = control_encoder_II
+        aSwitch = control_brake_state
+        torque = control_torque
+        angle = control_encoder_I
+        speed = control_encoder_II
 
-        StaticReference.inputPageConnection = 1
+        inputPageConnection = 1
         val common = Common(this)
         common.setClickForSideBar(hamburger,controls,sidebar,all_controls_card)
         val view = layoutInflater.inflate(R.layout.custom_dialog_layout_shutdown,null)
         common.setClickForControls(view,sidebar,all_controls_card,controls,control_shutdown,control_reset,control_set_home,control_close,control_direction_clockwise,control_direction_anticlockwise,control_brake_state,control_refresh)
 
-        StaticReference.pairedDevicesViewHolder = PairedDevicesViewHolder(StaticReference.pairedDevicesList,this,progress_bar,sidebar,controls)
+        pairedDevicesViewHolder = PairedDevicesViewHolder(pairedDevicesList,this,progress_bar,sidebar,controls)
 
         val pairedDevicesRecyclerView = findViewById<RecyclerView>(R.id.paired_devices_recycler_view)
         pairedDevicesRecyclerView.layoutManager = LinearLayoutManager(this)
-        pairedDevicesRecyclerView.adapter = StaticReference.pairedDevicesViewHolder
+        pairedDevicesRecyclerView.adapter = pairedDevicesViewHolder
 
     }
 }

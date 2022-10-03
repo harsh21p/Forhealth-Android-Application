@@ -5,8 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
+
+import com.example.forhealth.bluetooth.StaticReference;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -85,6 +88,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         createTables(sqLiteDatabase);
         sqLiteDatabaseReference = sqLiteDatabase;
+
+
     }
 
     @Override
@@ -184,13 +189,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return supportAddExercises("i","0",U_CAREGIVER_ID_IN_EXERCISE, U_PATIENT_ID_IN_EXERCISE,U_SESSION_ID_IN_EXERCISE,U_EXERCISE_PARAMETERS,U_EXERCISE_DATE,U_EXERCISE_TIME,U_IDENTIFIER);
     }
 
-    public String updateTableData( String U_DATA_ID, String U_CAREGIVER_ID_IN_DATA,String U_PATIENT_ID_IN_DATA,String U_EXERCISE_ID_IN_DATA, String U_DATA_TIMESTAMP, String U_DATA, String U_DATA_IDENTIFIER) {
-        return supportAddData("u",U_DATA_ID,U_CAREGIVER_ID_IN_DATA,U_PATIENT_ID_IN_DATA,U_EXERCISE_ID_IN_DATA,U_DATA_TIMESTAMP,U_DATA,U_DATA_IDENTIFIER);
+    public String updateTableData( String U_DATA_ID, String U_CAREGIVER_ID_IN_DATA,String U_PATIENT_ID_IN_DATA,String U_SESSION_ID_IN_DATA,String U_EXERCISE_ID_IN_DATA, String U_DATA_TIMESTAMP, String U_DATA, String U_DATA_IDENTIFIER) {
+        return supportAddData("u",U_DATA_ID,U_CAREGIVER_ID_IN_DATA,U_PATIENT_ID_IN_DATA,U_SESSION_ID_IN_DATA,U_EXERCISE_ID_IN_DATA,U_DATA_TIMESTAMP,U_DATA,U_DATA_IDENTIFIER);
     }
 
-    public String addDataToData( String U_CAREGIVER_ID_IN_DATA,String U_PATIENT_ID_IN_DATA,String U_EXERCISE_ID_IN_DATA, String U_DATA_TIMESTAMP, String U_DATA,String U_DATA_IDENTIFIER){
+    public String addDataToData( String U_CAREGIVER_ID_IN_DATA,String U_PATIENT_ID_IN_DATA,String U_SESSION_ID_IN_DATA,String U_EXERCISE_ID_IN_DATA, String U_DATA_TIMESTAMP, String U_DATA,String U_DATA_IDENTIFIER){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        return supportAddData("i","0",U_CAREGIVER_ID_IN_DATA,U_PATIENT_ID_IN_DATA,U_EXERCISE_ID_IN_DATA,U_DATA_TIMESTAMP,U_DATA,U_DATA_IDENTIFIER);
+        return supportAddData("i","0",U_CAREGIVER_ID_IN_DATA,U_PATIENT_ID_IN_DATA,U_SESSION_ID_IN_DATA,U_EXERCISE_ID_IN_DATA,U_DATA_TIMESTAMP,U_DATA,U_DATA_IDENTIFIER);
     }
 
 
@@ -316,13 +321,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    String supportAddData(String cmd, String U_DATA_ID, String U_CAREGIVER_ID_IN_DATA,String U_PATIENT_ID_IN_DATA,String U_EXERCISE_ID_IN_DATA, String U_DATA_TIMESTAMP, String U_DATA, String U_DATA_IDENTIFIER){
+    String supportAddData(String cmd, String U_DATA_ID, String U_CAREGIVER_ID_IN_DATA,String U_PATIENT_ID_IN_DATA,String U_SESSION_ID_IN_DATA,String U_EXERCISE_ID_IN_DATA, String U_DATA_TIMESTAMP, String U_DATA, String U_DATA_IDENTIFIER){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(CAREGIVER_ID_IN_DATA,U_CAREGIVER_ID_IN_DATA);
         contentValues.put(PATIENT_ID_IN_DATA,U_PATIENT_ID_IN_DATA);
         contentValues.put(EXERCISE_ID_IN_DATA,U_EXERCISE_ID_IN_DATA);
+        contentValues.put(SESSION_ID_IN_DATA,U_SESSION_ID_IN_DATA);
         contentValues.put(DATA_TIMESTAMP,U_DATA_TIMESTAMP);
         contentValues.put(DATA,U_DATA);
         contentValues.put(IDENTIFIER,U_DATA_IDENTIFIER);
@@ -348,6 +354,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public Cursor readData(String TABLE_NAME){
+        StaticReference.dbpath = context.getDatabasePath(DATABASE_NAME).getParent();
+
         String query = "SELECT * FROM "+ TABLE_NAME;
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = null;
@@ -387,8 +395,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor readSession(String U_IDENTIFIER,String CAREGIVER_ID,String SESSION_ID){
-        String query = "SELECT * FROM "+EXERCISE_TABLE_NAME+" WHERE "+CAREGIVER_ID_IN_EXERCISE+" = "+CAREGIVER_ID+" and "+IDENTIFIER+" = "+U_IDENTIFIER+" and "+SESSION_ID_IN_EXERCISE+" = "+SESSION_ID+";";
+    public Cursor readSession(String U_IDENTIFIER,String CAREGIVER_ID){
+        String query = "SELECT * FROM "+SESSIONS_TABLE_NAME+" WHERE "+CAREGIVER_ID_IN_SESSIONS+" = "+CAREGIVER_ID+" and "+IDENTIFIER+" = "+U_IDENTIFIER+";";
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = null;
         if(sqLiteDatabase!=null){
@@ -409,4 +417,5 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
         return cursor;
     }
+
 }

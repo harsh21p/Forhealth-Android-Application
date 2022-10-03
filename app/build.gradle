@@ -7,13 +7,13 @@ plugins {
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 32
-    buildToolsVersion "32.0.0"
+    compileSdk 33
+    buildToolsVersion "31.0.0"
 
     defaultConfig {
         applicationId "com.example.forhealth"
         minSdk 21
-        targetSdk 32
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -52,7 +52,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.jjoe64:graphview:4.2.2'
     implementation 'in.unicodelabs.sorbh:kdgaugeview:1.0.0'
-    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.core:core-ktx:1.9.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }

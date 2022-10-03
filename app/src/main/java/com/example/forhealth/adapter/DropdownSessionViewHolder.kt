@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
 import com.example.forhealth.activity.GuestMode
 import com.example.forhealth.datamodel.ModelMovement
+import com.example.forhealth.datamodel.ModelPairedDevices
 
-internal class DropdownSessionViewHolder (private var List: ArrayList<ModelMovement>, private val listener: GuestMode) :
+internal class DropdownSessionViewHolder (private var List: ArrayList<ModelPairedDevices>, private val listener: GuestMode) :
     RecyclerView.Adapter<DropdownSessionViewHolder.MyViewHolder>() {
     internal inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
@@ -34,7 +35,7 @@ internal class DropdownSessionViewHolder (private var List: ArrayList<ModelMovem
     }
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val sessionName = List[position]
-        holder.sessionName.text = sessionName.movement
+        holder.sessionName.text = sessionName.deviceName
 
     }
     override fun getItemCount(): Int {

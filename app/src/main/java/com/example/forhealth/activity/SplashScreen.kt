@@ -1,15 +1,23 @@
 package com.example.forhealth.activity
 
 import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.example.forhealth.R
+import com.example.forhealth.bluetooth.StaticReference
+import com.example.forhealth.database.CSVWriter
+import com.example.forhealth.database.MyDatabaseHelper
 import kotlinx.android.synthetic.main.splash_screen.*
+import java.io.File
+import java.io.FileWriter
 
 class SplashScreen  : AppCompatActivity() {
 
@@ -62,4 +70,6 @@ class SplashScreen  : AppCompatActivity() {
         }, splashScreenTimeout.toLong())
 
     }
+
+
 }

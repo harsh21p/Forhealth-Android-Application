@@ -80,6 +80,7 @@ class ExistingPatient: AppCompatActivity() {
         })
 
 
+
         main_layout.setOnClickListener(View.OnClickListener {
 
             sidebar.visibility = View.GONE

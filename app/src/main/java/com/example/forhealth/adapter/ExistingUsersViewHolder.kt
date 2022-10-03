@@ -63,9 +63,19 @@ internal class ExistingUsersViewHolder (private var List: List<ModelExistingUser
         MyViewHolder(itemView) {
         var nameOfDoctor: TextView = itemView.findViewById(R.id.existing_user_name)
         var profileOfDoctor: ImageView = itemView.findViewById(R.id.existing_user_profile)
+        var deleteButton: ImageView = itemView.findViewById(R.id.delete_button)
         fun bind(position: Int) {
             val recyclerViewModel = List[position]
-            nameOfDoctor.text = "Dr. "+recyclerViewModel.nameOfDoctor
+
+            deleteButton.setOnClickListener(View.OnClickListener {
+                val position = adapterPosition
+                if(position!= RecyclerView.NO_POSITION) {
+                    listener.onDeleteClick(position)
+                }
+            })
+
+
+            nameOfDoctor.text = recyclerViewModel.nameOfDoctor
             if(recyclerViewModel.avatarOfDoctor == 0){
                 profileOfDoctor.setImageDrawable(
                     ContextCompat.getDrawable(listener,

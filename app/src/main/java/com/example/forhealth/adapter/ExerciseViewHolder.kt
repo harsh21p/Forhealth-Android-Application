@@ -3,6 +3,7 @@ package com.example.forhealth.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +19,7 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
         const val VIEW_TYPE_TWO = 2
     }
 
-    internal open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    internal open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener{
 
         init {
             itemView.setOnClickListener(this)
@@ -27,7 +28,7 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
         override fun onClick(p0: View?) {
             val position = adapterPosition
             if(position!= RecyclerView.NO_POSITION) {
-                listener.onExeciseClick(position)
+                listener.onExerciseClick(position)
             }
         }
     }
@@ -44,11 +45,14 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
         return View2ViewHolder(itemView)
     }
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+
+
         if (List[position].viewType === VIEW_TYPE_ONE) {
             (holder as View1ViewHolder).bind(position)
         } else {
             (holder as View2ViewHolder).bind(position)
         }
+
     }
     override fun getItemCount(): Int {
         return List.size
@@ -56,6 +60,8 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
 
     private inner class View1ViewHolder(itemView: View) :
         MyViewHolder(itemView) {
+
+
 
         var movementNo: TextView = itemView.findViewById(R.id.movement_no)
         var exerciseType: TextView = itemView.findViewById(R.id.exercise_type)
@@ -73,6 +79,9 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
         var secondMovementHoldTime: TextView = itemView.findViewById(R.id.second_movement_hold_time)
         var firstMovementType:TextView = itemView.findViewById(R.id.first_movement_type)
         var secondMovementType:TextView = itemView.findViewById(R.id.second_movement_type)
+
+        var editButton:ImageView = itemView.findViewById(R.id.edit_button)
+        var deleteButton:ImageView = itemView.findViewById(R.id.delete_button)
 
         fun bind(position: Int) {
             val recyclerViewModel = List[position]
@@ -111,6 +120,24 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
                     secondMovementAssistance.text=recyclerViewModel.secondMovementAssistance
                 }
             }
+
+            editButton.setOnClickListener(View.OnClickListener {
+                val position = adapterPosition
+            if(position!= RecyclerView.NO_POSITION) {
+                listener.editButton(position)
+            }
+
+            })
+
+
+            deleteButton.setOnClickListener(View.OnClickListener {
+                val position = adapterPosition
+                if(position!= RecyclerView.NO_POSITION) {
+                    listener.deleteButton(position)
+                }
+
+            })
+
             firstMovementType.text = recyclerViewModel.firstMovementType
             secondMovementType.text = recyclerViewModel.secondMovementType
             movementNo.text = recyclerViewModel.movementNo

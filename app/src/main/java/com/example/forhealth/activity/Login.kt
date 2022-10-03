@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.forhealth.R
+import com.example.forhealth.bluetooth.StaticReference
 import com.example.forhealth.common.Common
 import com.example.forhealth.database.MyDatabaseHelper
 import com.google.firebase.auth.FirebaseAuth
@@ -128,6 +129,14 @@ class Login : AppCompatActivity() {
         main_layout.setOnClickListener(View.OnClickListener {
             val common = Common(this)
             common.hideKeyboard()
+        })
+
+        forgot_password.setOnClickListener(View.OnClickListener {
+
+            val iForgotPassword = Intent(this@Login, ForgotPassword::class.java)
+            startActivity(iForgotPassword)
+            finish()
+
         })
     }
 

@@ -1,6 +1,7 @@
 package com.example.forhealth.bluetooth
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.os.Handler
@@ -8,10 +9,12 @@ import android.os.Message
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import com.example.forhealth.R
 import com.example.forhealth.bluetooth.StaticReference.*
 import com.example.forhealth.database.MyDatabaseHelper
 import com.github.mikephil.charting.data.Entry
@@ -32,13 +35,7 @@ class Bluetooth(context: Context) {
     private var result:String=""
     private var checkRepetitions:Boolean = false
 
-    init {
-        if(selectedPatientId!=9999) {
-            i=1
-        }else{
-            i=0
-        }
-    }
+
 
     fun setupBT(address: String){
 
@@ -56,7 +53,8 @@ class Bluetooth(context: Context) {
         val device = mBtAdapter!!.getRemoteDevice(address)
         mChatService!!.connect(device, portNumber, true)
     }
-    var mHandler: Handler = object : Handler() {
+    var mHandler: Handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
@@ -69,7 +67,8 @@ class Bluetooth(context: Context) {
                     }
                     BluetoothChatService.STATE_LISTEN, BluetoothChatService.STATE_NONE -> {
                         Log.d("status", "not connected")
-                        Connection=false
+                        Connection = false
+                        isClickable = true
                     }
                 }
                 Constants.MESSAGE_WRITE -> {
@@ -96,12 +95,19 @@ class Bluetooth(context: Context) {
         }
     }
     private fun messageReceived(readData: String) {
+        if(selectedPatientId!=9999) {
+            i=1
+        }else{
+            i=0
+        }
         var readDataList = readData.split(",")
         when (inputPageConnection) {
             1 -> {
                 Log.d("EX","in 1")
+                isClickable = true
                 if (readDataList[0] == "refresh") {
                     try {
+
                         aSwitch.isChecked = readDataList[1]=="True"
                         torque.text= readDataList[3]
                         angle.text=readDataList[4]+" deg"
@@ -144,17 +150,16 @@ class Bluetooth(context: Context) {
                             if(myDatabaseHelper != null){
                                 currentDateTime = sdf.format(Date())
                                 try {
-                                    if(checkRepetitions){
+                                    if(checkRepetitions && !isClickable){
                                         Log.d("Data", "Start")
                                         result =
                                             myDatabaseHelper!!.addDataToData(mAuthString.toString(),
                                                 selectedPatientId.toString(),
+                                                currentSessionId.toString(),
                                                 currentExerciseId.toString(),
                                                 currentDateTime,
-                                                readDataList[0],
+                                                readDataList[1]+","+readDataList[2]+","+readDataList[3],
                                                 i.toString())
-
-
                                     }else{
                                         Log.d("Data", "Stop")
                                     }
@@ -164,9 +169,16 @@ class Bluetooth(context: Context) {
                                 }
                             }
 
-                            // add graph parameter
                             setDataToLineChart(readDataList[1])
                             speedMeter(readDataList[2])
+                            try {
+                                torqueValue.text=readDataList[1]
+                                angleValue.text=readDataList[2]
+                                speedValue.text=readDataList[3]
+                            }catch (e:Exception){
+
+                            }
+
                             incriment += 1
 
                         }catch (e:Exception){
@@ -175,6 +187,26 @@ class Bluetooth(context: Context) {
                     }else{
                         if(readDataList[0]=="repetition_completed") {
                             try {
+                                isClickable = readDataList[1] == "0"
+                                if(isClickable && currentPosition < movementList.size-1){
+                                    try {
+
+                                        dialogBoxNextMovement(viewOfNextMovement,mContext)
+                                    }catch (e:Exception){
+
+                                    }
+                                    //want to start next
+                                }else{
+                                    if(isClickable) {
+                                        try {
+                                            dialogueBoxAllMovementCompleted(viewOfAllExercises,
+                                                mContext)
+                                        } catch (e: Exception) {
+
+                                        }
+                                    }
+                                    //completed
+                                }
                                 checkRepetitions = readDataList[1] != "0"
                                 currentRepetition.text = readDataList[1]
                             }catch (e:Exception){
@@ -186,6 +218,12 @@ class Bluetooth(context: Context) {
                                     yAxis!!.axisMaximum = readDataList[1].toFloat() + 80
                                     yAxis!!.axisMinimum = readDataList[1].toFloat() - 80
                                 }catch (e:Exception){
+
+                                }
+                            }else{
+                                if(readDataList[0]=="feedback"){
+
+                                    feedBack.text=readDataList[1]
 
                                 }
                             }
@@ -222,11 +260,11 @@ class Bluetooth(context: Context) {
 
     private fun speedMeter(readData:String){
         var value = 135 + readData.toInt()
-        try {
+//        try {
             speedMeter!!.setSpeed(value.toFloat())
-        }catch (e:Exception){
-            Log.d("EX",e.toString())
-        }
+//        }catch (e:Exception){
+//            Log.d("EX",e.toString())
+//        }
     }
 
     fun sendMessage(msg:String,context: Context) {
@@ -263,6 +301,106 @@ class Bluetooth(context: Context) {
         setupBT(deviceAddress.deviceId)
         Toast.makeText(context, "Connecting...", Toast.LENGTH_SHORT).show()
         onResumeCheck(0,context,progressBar,sidebar,controls)
+    }
+
+    fun dialogBoxNextMovement(view: View,context: Context) {
+
+        val builder = AlertDialog.Builder(context, R.style.CustomAlertDialog).create()
+        val  yes = view.findViewById<CardView>(R.id.yes_button)
+        val  no = view.findViewById<CardView>(R.id.no_button)
+        if(view.parent != null){
+            (view.parent as ViewGroup).removeView(view)
+        }
+        builder.setView(view)
+        yes.setOnClickListener {
+            currentPosition+=1
+
+            try {
+                cursorMovement!!.moveToPosition(currentPosition)
+            }catch (e:Exception){
+                currentPosition-=1
+            }
+
+            sendMessage("1," + cursorMovement!!.getString(4), context)
+
+            currentExerciseId = movementList[currentPosition].id
+
+            movement_no_session_control.text = movementList[currentPosition].movementNo
+
+            given_exercise_type.text = movementList[currentPosition].exerciseType
+            first_angle_session_control.text = movementList[currentPosition].firstAngle
+            second_angle_session_control.text = movementList[currentPosition].secondAngle
+            third_angle_session_control.text = movementList[currentPosition].thirdAngle
+            given_repetition_session_control.text = movementList[currentPosition].repetition
+
+            first_movement_type_session_control.text = movementList[currentPosition].firstMovementType
+            second_movement_type_session_control.text = movementList[currentPosition].secondMovementType
+            first_movement_speed_session_control.text = movementList[currentPosition].firstMovementSpeed
+            second_movement_speed_session_control.text = movementList[currentPosition].secondMovementSpeed
+            first_movement_assistance_session_control.text = movementList[currentPosition].firstMovementAssistance
+            second_movement_assistance_session_control.text = movementList[currentPosition].secondMovementAssistance
+            first_movement_hold_time_session_control.text = movementList[currentPosition].firstMovementHoldTime
+            second_movement_hold_time_session_control.text = movementList[currentPosition].secondMovementHoldTime
+
+
+            if(movementList[currentPosition].firstMovementType == "PASSIVE"){
+                first_movement_assistance_session_control_card.visibility=View.GONE
+                first_hold_time_card.visibility=View.GONE
+                first_movement_parameters_assistance_and_resistance.visibility=View.GONE
+            }else{
+                if(movementList[currentPosition].firstMovementType == "AR ( ISOMETRIC )"){
+                    second_movement_assistance_session_control_card.visibility=View.VISIBLE
+                    first_movement_parameters_assistance_and_resistance.visibility=View.VISIBLE
+                    first_movement_parameters_assistance_and_resistance.text = "Resistance"
+                    first_hold_time_card.visibility=View.VISIBLE
+                }else{
+                    second_movement_assistance_session_control_card.visibility=View.VISIBLE
+                    first_movement_parameters_assistance_and_resistance.visibility=View.VISIBLE
+                    first_movement_parameters_assistance_and_resistance.text = "Assistance"
+                    first_hold_time_card.visibility=View.GONE
+                }
+            }
+
+            if(movementList[currentPosition].secondMovementType == "PASSIVE"){
+                second_movement_assistance_session_control_card.visibility=View.GONE
+                second_hold_time_card.visibility=View.GONE
+                second_movement_parameter_assistance_and_resistsnce.visibility=View.GONE
+            }else{
+                if(movementList[currentPosition].secondMovementType == "AR ( ISOMETRIC )"){
+                    second_movement_assistance_session_control_card.visibility=View.VISIBLE
+                    second_movement_parameter_assistance_and_resistsnce.visibility=View.VISIBLE
+                    second_movement_parameter_assistance_and_resistsnce.text = "Resistance"
+                    second_hold_time_card.visibility=View.VISIBLE
+                }else{
+                    second_movement_assistance_session_control_card.visibility=View.VISIBLE
+                    second_movement_parameter_assistance_and_resistsnce.visibility=View.VISIBLE
+                    second_movement_parameter_assistance_and_resistsnce.text = "Assistance"
+                    second_hold_time_card.visibility=View.GONE
+                }
+            }
+            builder.dismiss()
+        }
+        no.setOnClickListener {
+            builder.dismiss()
+        }
+        builder.setCanceledOnTouchOutside(true)
+        builder.show()
+    }
+
+    fun dialogueBoxAllMovementCompleted(view: View,context: Context) {
+
+        val builder = AlertDialog.Builder(context, R.style.CustomAlertDialog).create()
+        val  yes = view.findViewById<CardView>(R.id.ok_button)
+        if(view.parent != null){
+            (view.parent as ViewGroup).removeView(view)
+        }
+        builder.setView(view)
+        yes.setOnClickListener {
+
+            builder.dismiss()
+        }
+        builder.setCanceledOnTouchOutside(true)
+        builder.show()
     }
 
     private fun onResumeCheck(i:Int,context: Context,progressBar:ProgressBar,sidebar:CardView,controls:CardView) {

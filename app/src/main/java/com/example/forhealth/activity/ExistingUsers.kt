@@ -2,16 +2,19 @@ package com.example.forhealth.activity
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +30,8 @@ class ExistingUsers : AppCompatActivity() {
     private var existingUsersList = ArrayList<ModelExistingUsers>()
     private val existingUsersAdapter =  ExistingUsersViewHolder(existingUsersList,this)
     private var mMyDatabaseHelper:MyDatabaseHelper?=null
-
+    private var position = 9999
+    private var identifier = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -67,6 +71,7 @@ class ExistingUsers : AppCompatActivity() {
 
 
         var cursor = mMyDatabaseHelper!!.readData("CAREGIVERS")
+//        Toast.makeText(this, dbpath,Toast.LENGTH_SHORT).show()
 
         while (cursor.moveToNext()){
 
@@ -77,7 +82,6 @@ class ExistingUsers : AppCompatActivity() {
                     cursor.getString(4).toInt(),
                     cursor.getString(0).toInt()
                 )
-//                Toast.makeText(this, cursor.getString(2).toString(),Toast.LENGTH_LONG).show()
                 existingUsersList.add(model)
             }catch (e:Exception){
                 mMyDatabaseHelper!!.deleteIntEntry(cursor.getString(0).toString(),"CAREGIVER_ID","CAREGIVERS")
@@ -98,7 +102,6 @@ class ExistingUsers : AppCompatActivity() {
         }else{
             val view = layoutInflater.inflate(R.layout.custom_dialog_login_pin,null)
             mAuthString = existingUsersList[position].doctorId
-//            mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),"CAREGIVER_ID","CAREGIVERS")
             loginPinDialogBox(this,view,existingUsersList[position].nameOfDoctor,existingUsersList[position].avatarOfDoctor)
 
         }
@@ -156,7 +159,10 @@ class ExistingUsers : AppCompatActivity() {
             override fun beforeTextChanged(
                 s: CharSequence, start: Int,
                 count: Int, after: Int,
-            ) {}
+            ) {
+
+
+            }
             override fun afterTextChanged(s: Editable) {}
         })
 
@@ -184,25 +190,52 @@ class ExistingUsers : AppCompatActivity() {
                     val timeout = 1000
                     Handler().postDelayed({
 
-                        var pin =
-                            idEdtPin1.text.toString() + idEdtPin2.text.toString() + idEdtPin3.text.toString() + idEdtPin4.text.toString()
-                        var cursor =
-                            mMyDatabaseHelper!!.readDataByIntID(mAuthString, "CAREGIVER_ID","CAREGIVERS")
+                        var pin = idEdtPin1.text.toString() + idEdtPin2.text.toString() + idEdtPin3.text.toString() + idEdtPin4.text.toString()
+                        var cursor = mMyDatabaseHelper!!.readDataByIntID(mAuthString, "CAREGIVER_ID","CAREGIVERS")
                         cursor.moveToFirst()
                         if (pin == cursor.getString(2)) {
 
                             builder.dismiss()
-                            progressBar.visibility=View.INVISIBLE
-                            Toast.makeText(mContext, "Welcome Dr. $name", Toast.LENGTH_LONG).show()
-                            val iDoctorsLandingPage = Intent(this@ExistingUsers, DoctorsLandingPage::class.java)
-                            startActivity(iDoctorsLandingPage)
-                            finish()
+                            progressBar.visibility = View.INVISIBLE
+                            if(identifier != 1) {
+                                val iDoctorsLandingPage =
+                                    Intent(this@ExistingUsers, DoctorsLandingPage::class.java)
+                                startActivity(iDoctorsLandingPage)
+                                finish()
+
+                            }else{
+                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
+                                    "CAREGIVER_ID",
+                                    "CAREGIVERS")
+                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
+                                    "CAREGIVER_ID_IN_PATIENT",
+                                    "PATIENTS")
+                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
+                                    "CAREGIVER_ID_IN_EXERCISE",
+                                    "EXERCISES")
+                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
+                                    "CAREGIVER_ID_IN_SESSIONS",
+                                    "SESSIONS")
+                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
+                                    "CAREGIVER_ID_IN_DATA",
+                                    "DATA")
+                                existingUsersList.removeAt(position)
+                                existingUsersAdapter.notifyDataSetChanged()
+                                identifier = 0
+
+                                if(existingUsersList.isEmpty()){
+                                    var iLogin = Intent(this@ExistingUsers, Login::class.java)
+                                    startActivity(iLogin)
+                                    finish()
+                                }
+                            }
 
                         } else {
                             progressBar.visibility=View.INVISIBLE
                             Toast.makeText(mContext, "Wrong pin try again ", Toast.LENGTH_SHORT)
                                 .show()
                             builder.dismiss()
+                            identifier = 0
                         }
 
                     }, timeout.toLong())
@@ -222,7 +255,41 @@ class ExistingUsers : AppCompatActivity() {
         })
 
         builder.setCanceledOnTouchOutside(true)
+        builder.setOnDismissListener(DialogInterface.OnDismissListener {
+            identifier = 0
+        })
         builder.show()
+
         idEdtPin1.requestFocus()
+    }
+
+    fun onDeleteClick(position: Int) {
+
+        mAuthString = existingUsersList[position].doctorId
+        val view = layoutInflater.inflate(R.layout.custom_dialog_layout_delete,null)
+        dialogueBoxDelete(view,position)
+
+    }
+
+    fun dialogueBoxDelete(view: View,position: Int) {
+        this.position = position
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+        val  yes = view.findViewById<CardView>(R.id.delete_dialog_yes_button)
+        val  no = view.findViewById<CardView>(R.id.delete_dialog_cancel_button)
+        if(view.parent != null){
+            (view.parent as ViewGroup).removeView(view)
+        }
+        builder.setView(view)
+        yes.setOnClickListener {
+            identifier = 1
+            val view = layoutInflater.inflate(R.layout.custom_dialog_login_pin,null)
+            loginPinDialogBox(this,view,existingUsersList[position].nameOfDoctor,existingUsersList[position].avatarOfDoctor)
+            builder.dismiss()
+        }
+        no.setOnClickListener {
+            builder.dismiss()
+        }
+        builder.setCanceledOnTouchOutside(true)
+        builder.show()
     }
 }

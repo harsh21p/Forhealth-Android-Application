@@ -49,131 +49,78 @@
         android:layout_width="359px"
         android:layout_height="720px"
         android:orientation="vertical"
+        android:layout_marginVertical="20dp"
         app:layout_constraintEnd_toStartOf="@+id/cardView3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/myimagezz">
 
+
+        <TextView
+            android:id="@+id/patient_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@null"
+            android:fontFamily="@font/raleway_medium"
+            android:hint="Patient Name"
+            android:textAlignment="center"
+            android:textColor="#2E476E"
+            android:textFontWeight="700"
+            android:layout_marginVertical="5dp"
+            android:textSize="19px" />
+
+
+        <TextView
+            android:id="@+id/patient_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginVertical="5dp"
+            android:background="@null"
+            android:fontFamily="@font/raleway_medium"
+            android:hint="Age"
+            android:textAlignment="center"
+            android:textColor="#2E476E"
+            android:textColorHint="#2E476E"
+            android:textFontWeight="700"
+            android:textSize="19px" />
+
+        <TextView
+            android:id="@+id/patient_weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginVertical="5dp"
+            android:background="@null"
+            android:fontFamily="@font/raleway_medium"
+            android:hint="Weight"
+            android:textAlignment="center"
+            android:textColor="#2E476E"
+            android:textColorHint="#2E476E"
+            android:textFontWeight="700"
+            android:textSize="19px" />
+
+        <TextView
+            android:id="@+id/patient_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginVertical="5dp"
+            android:background="@null"
+            android:fontFamily="@font/raleway_medium"
+            android:hint="Contact"
+            android:textAlignment="center"
+            android:textColor="#2E476E"
+            android:textColorHint="#2E476E"
+            android:textFontWeight="700"
+            android:textSize="19px" />
+
         <androidx.cardview.widget.CardView
-            android:id="@+id/getstartbutton1"
-            android:layout_width="257px"
-            android:layout_height="48px"
-            android:layout_marginLeft="52px"
-            android:layout_marginTop="52px"
-            app:cardBackgroundColor="#EEF0F6"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="3dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView7">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/patient_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@null"
-                    android:fontFamily="@font/raleway_medium"
-                    android:hint="Patient Name"
-                    android:textAlignment="center"
-                    android:textColor="#2E476E"
-                    android:textColorHint="#2E476E"
-                    android:textFontWeight="700"
-                    android:textSize="19px"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-
-            android:id="@+id/getstartbutton2"
-            android:layout_width="257px"
-            android:layout_height="48px"
-            android:layout_marginLeft="52px"
-            android:layout_marginTop="29px"
-            app:cardBackgroundColor="#EEF0F6"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="3dp"
-            app:layout_constraintBottom_toBottomOf="@+id/getstartbutton3"
-            app:layout_constraintEnd_toStartOf="@+id/getstartbutton3"
-            app:layout_constraintStart_toEndOf="@+id/getstartbutton1"
-            app:layout_constraintTop_toTopOf="@+id/getstartbutton1">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/patient_age"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@null"
-                    android:fontFamily="@font/raleway_medium"
-                    android:hint="Age"
-                    android:textAlignment="center"
-                    android:textColor="#2E476E"
-                    android:textColorHint="#2E476E"
-                    android:textFontWeight="700"
-                    android:textSize="19px"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-            android:id="@+id/getstartbutton4"
-            android:layout_width="257px"
-            android:layout_height="48px"
-            android:layout_marginLeft="52px"
-            android:layout_marginTop="29px"
-            app:cardBackgroundColor="#EEF0F6"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="3dp"
-            app:layout_constraintStart_toStartOf="@+id/getstartbutton2"
-            app:layout_constraintTop_toTopOf="@+id/occupation">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/patient_weight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@null"
-                    android:fontFamily="@font/raleway_medium"
-                    android:hint="Weight"
-                    android:textAlignment="center"
-                    android:textColor="#2E476E"
-                    android:textColorHint="#2E476E"
-                    android:textFontWeight="700"
-                    android:textSize="19px"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-            android:id="@+id/getstartbutton3"
+            android:id="@+id/report_upload_button"
             android:layout_width="257px"
             android:layout_height="48px"
             android:layout_marginLeft="52px"
@@ -192,14 +139,53 @@
                 android:gravity="center">
 
                 <TextView
-                    android:id="@+id/patient_contact"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center_horizontal"
                     android:background="@null"
                     android:fontFamily="@font/raleway_medium"
-                    android:hint="Contact"
+                    android:hint="Upload report"
+                    android:textAlignment="center"
+                    android:textColor="#2E476E"
+                    android:textColorHint="#2E476E"
+                    android:textFontWeight="700"
+                    android:textSize="19px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/delete_button"
+            android:layout_width="257px"
+            android:layout_height="48px"
+            android:layout_marginLeft="52px"
+            android:layout_marginTop="29px"
+            android:layout_marginRight="286px"
+            app:cardBackgroundColor="#EEF0F6"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="3dp"
+            app:layout_constraintBottom_toBottomOf="@+id/getstartbutton1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/getstartbutton1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@null"
+                    android:fontFamily="@font/raleway_medium"
+                    android:hint="Delete"
                     android:textAlignment="center"
                     android:textColor="#2E476E"
                     android:textColorHint="#2E476E"
