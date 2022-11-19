@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android-extensions'
     id 'com.google.gms.google-services'
+    id 'kotlin-kapt'
 }
 apply plugin: 'kotlin-android'
 
@@ -32,27 +33,51 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+            freeCompilerArgs += [
+                    '-Xjvm-default=enable'
+            ]
+    }
+
+    buildFeatures{
+        dataBinding true
     }
 }
 
 dependencies {
 
-    implementation 'com.google.android.material:material:1.8.0-alpha01'
-    implementation 'com.google.firebase:firebase-database:20.0.6'
-    implementation 'com.google.firebase:firebase-auth:21.0.8'
-    implementation 'com.google.firebase:firebase-firestore:24.3.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0-alpha02'
+    implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.firebase:firebase-auth:21.1.0'
+    implementation 'com.google.firebase:firebase-firestore:24.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.jjoe64:graphview:4.2.2'
     implementation 'in.unicodelabs.sorbh:kdgaugeview:1.0.0'
     implementation "androidx.core:core-ktx:1.9.0"
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    def room_version = "2.4.3"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+
+    def lifecycle_version = "2.5.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    implementation 'com.google.dagger:dagger-android-processor:2.40.5'
+    kapt 'com.google.dagger:dagger-compiler:2.40.5'
+
+    implementation 'com.jjoe64:graphview:4.2.2'
 
 }

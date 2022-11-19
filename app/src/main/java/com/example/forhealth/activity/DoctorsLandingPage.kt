@@ -1,10 +1,11 @@
 package com.example.forhealth.activity
 
+import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -17,55 +18,67 @@ import android.view.WindowManager
 import android.widget.CalendarView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
-import com.example.forhealth.adapter.PairedDevicesViewHolder
 import com.example.forhealth.adapter.ScheduledSessionViewHolder
-import com.example.forhealth.bluetooth.StaticReference.*
-import com.example.forhealth.common.Common
-import com.example.forhealth.database.CSVWriter
-import com.example.forhealth.database.MyDatabaseHelper
+import com.example.forhealth.database.*
 import com.example.forhealth.datamodel.ModelScheduledSession
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.doctors_landing_page.*
-import java.io.File
-import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
+import androidx.lifecycle.Observer
+import com.example.forhealth.dagger.*
+import com.example.forhealth.databinding.DoctorsLandingPageBinding
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import java.io.File
+import java.io.FileWriter
+import kotlin.collections.HashMap
 
 
 class DoctorsLandingPage : AppCompatActivity() {
-    private var mMyDatabaseHelper: MyDatabaseHelper?=null
+
     private var scheduledSessionList = ArrayList<ModelScheduledSession>()
     private val scheduledSessionsAdapter =  ScheduledSessionViewHolder(scheduledSessionList,this)
-    private val common = Common(this)
-    private var doctorEmail:String?=null
     private var db = FirebaseFirestore.getInstance()
+    private lateinit var binding : DoctorsLandingPageBinding
+    @Inject
+    @CommonQualifier lateinit var common:Services
+
+    @Inject
+    @BluetoothQualifier lateinit var bluetooth:Services
+
+    lateinit var mainViewModel: DatabaseViewModel
+
+    @Inject
+    lateinit var myDatabaseInstance: MyDatabaseInstance
+
+    lateinit var myLiveData:MyLiveData
+
+    var check = false
 
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // hide notification bsr
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-        setContentView(R.layout.doctors_landing_page)
+        binding = DataBindingUtil.setContentView(this,R.layout.doctors_landing_page)
+
+        var myComponent = (application as ApplicationScope).myComponent
+        myComponent.inject(this)
 
         // hide bottom navigation bar
-
-        selectedSessionName = null
-        currentSessionId = 9999
-        selectedPatientId = 9999
-        speedMeter = null
-        chart = null
-        hamburgerVisibilityManager = 1
 
         val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
@@ -73,87 +86,190 @@ class DoctorsLandingPage : AppCompatActivity() {
         val decorView = window.decorView
         decorView.systemUiVisibility = uiOptions
 
-        getDataFromDatabase()
-        sessionRecycler()
-        calenderSettings()
+        val dao = myDatabaseInstance.databaseDao()
+        val repository = DataRepository(dao)
 
+
+
+        myLiveData = MyLiveData.getMyLiveData(dao,bluetooth)
+
+        mainViewModel = ViewModelProvider(this, DatabaseViewModelFactory(repository)).get(DatabaseViewModel::class.java)
+
+        myLiveData.liveDataMutable.observe(this, Observer {
+                binding.tourqe =it[0]+" nm"
+                binding.angle =it[1]+" deg"
+                binding.speed =it[2]+" rpm"
+//                bluetooth.sendMessage("send")
+
+        })
+
+        myLiveData.btConnectionMutable.observe(this, Observer {
+
+            if(myLiveData.btConnectionMutable.value==true) {
+                check = true
+                Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show()
+                binding.controls.visibility = View.VISIBLE
+            }else{
+                if(check) {
+                    Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
+                    check = false
+                    binding.controls.visibility = View.GONE
+                    binding.allControlsCard.visibility = View.GONE
+                }
+            }
+        })
+
+        myLiveData.setCurrentPatient(9999)
+        myLiveData.setCurrentSession(9999)
+        myLiveData.setCurrentExercise(9999)
+
+        getDataFromDatabase()
+        calenderSettings()
         bluetoothSetup()
 
-
-        back_to_splash_screen.setOnClickListener(View.OnClickListener {
+        binding.backToSplashScreen.setOnClickListener(View.OnClickListener {
             val iSplashScreen = Intent(this@DoctorsLandingPage, SplashScreen::class.java)
             startActivity(iSplashScreen)
             finish()
         })
 
-        logout_button.setOnClickListener(View.OnClickListener {
-            mAuthString=9999
+        binding.logoutButton.setOnClickListener(View.OnClickListener {
+            myLiveData.setCurrentCaregiver(9999)
             val iExistingUsers = Intent(this@DoctorsLandingPage, ExistingUsers::class.java)
             startActivity(iExistingUsers)
             finish()
         })
 
-        existing_patient_button.setOnClickListener(View.OnClickListener {
+        binding.existingPatientButton.setOnClickListener(View.OnClickListener {
             val iExistingPatient = Intent(this@DoctorsLandingPage, ExistingPatient::class.java)
             startActivity(iExistingPatient)
             finish()
         })
 
-        new_patient.setOnClickListener(View.OnClickListener {
+        binding.newPatient.setOnClickListener(View.OnClickListener {
             val iCreateNewPatient = Intent(this@DoctorsLandingPage, CreateNewPatient::class.java)
             startActivity(iCreateNewPatient)
             finish()
         })
 
-        start_guest_session.setOnClickListener(View.OnClickListener {
-            val iGuestMode = Intent(this@DoctorsLandingPage, GuestMode::class.java)
-            startActivity(iGuestMode)
+        binding.startGuestSession.setOnClickListener(View.OnClickListener {
+            startActivity(Intent(this@DoctorsLandingPage, GuestMode::class.java))
             finish()
         })
 
-        main_layout.setOnClickListener(View.OnClickListener {
-            common.hideKeyboard()
-            if(sidebar.visibility == View.VISIBLE || all_controls_card.visibility == View.VISIBLE) {
-                sidebar.visibility = View.GONE
-                all_controls_card.visibility = View.GONE
-                hamburgerVisibilityManager = 1
+        binding.mainLayout.setOnClickListener(View.OnClickListener {
+            common.hideKeyboard(this)
+            if(binding.sidebar.visibility == View.VISIBLE || binding.allControlsCard.visibility == View.VISIBLE) {
+                binding.sidebar.visibility = View.GONE
+                binding.allControlsCard.visibility = View.GONE
             }
         })
 
-        download_button.setOnClickListener(View.OnClickListener {
+        binding.downloadButton.setOnClickListener(View.OnClickListener {
             exportDB()
         })
 
-        upload_button.setOnClickListener(View.OnClickListener {
+        binding.uploadButton.setOnClickListener(View.OnClickListener {
 
-
-            val dataOfDoctors = hashMapOf(
-                "Text" to "",
-                "Status" to ""
-            )
-            val dataOfPatient = hashMapOf(
-                "Name" to "",
-                "Year" to "",
-                "Enrollment" to ""
-            )
-
-            var firstCollection = db.collection("Doctors").document(doctorEmail!!)
-            var secondCollection = db.collection("Doctors").document(doctorEmail!!).collection("Patients").document()
-
-            firstCollection.set(dataOfDoctors)
-                .addOnSuccessListener {
-
-                    secondCollection.set(dataOfPatient)
-                        .addOnSuccessListener {
-                            Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w(ContentValues.TAG, "Error writing document", e)
-                        }
-                }
-                .addOnFailureListener { e -> Log.w(
-                    ContentValues.TAG, "Error writing document", e) }
+          sendDataToCloud()
         })
+    }
+
+    private fun sendDataToCloud() {
+
+        val view = layoutInflater.inflate(R.layout.custom_dialog_layout_data_save,null)
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+        builder.setView(view)
+        builder.setCanceledOnTouchOutside(false)
+        builder.show()
+        val sTimeout = 1000
+
+        var firstCollection = db.collection("Doctors").document(myLiveData.doctorEmailMutable.value!!)
+        var secondCollection = db.collection("Doctors").document(myLiveData.doctorEmailMutable.value!!).collection("Patients")
+
+
+        mainViewModel.getCaregiverById(myLiveData.currentCaregiverMutable.value!!).observe(this, Observer {
+            if(!it.isNullOrEmpty()){
+                for (i in it) {
+                    val dataOfDoctors = hashMapOf(
+                        "Name" to i.caregiverName,
+                        "Email" to i.caregiverEmail
+                    )
+
+                    mainViewModel.getPatientByCaregiver(myLiveData.currentCaregiverMutable.value!!).observe(this,
+                        Observer {
+
+                            if(!it.isNullOrEmpty()){
+                                for (i in it) {
+                                    val dataOfPatient = hashMapOf(
+                                        "Name" to i.patientName,
+                                        "Contact" to i.patientContact.toString(),
+                                        "Date" to i.patientDate.toString()
+                                    )
+
+                                    addToCloud(firstCollection,secondCollection,dataOfDoctors,dataOfPatient,i)
+                                }
+
+
+                                Handler().postDelayed({
+                                    builder.dismiss()
+                                    Toast.makeText(this,"Done!",Toast.LENGTH_SHORT).show()
+
+                                },sTimeout.toLong())
+                                Log.e("CSV", "Writing Done!")
+                        }else{
+                                Handler().postDelayed({
+                                    builder.dismiss()
+                                    Toast.makeText(this,"Failed!",Toast.LENGTH_SHORT).show()
+
+                                },sTimeout.toLong())
+                                Log.e("CSV", "Writing Failed!")
+                            }
+
+                    })
+                }
+
+            }else{
+                Handler().postDelayed({
+                    builder.dismiss()
+                    Toast.makeText(this,"Failed!",Toast.LENGTH_SHORT).show()
+
+                },sTimeout.toLong())
+                Log.e("CSV", "Writing Failed!")
+            }
+        })
+
+
+
+
+    }
+
+    private fun addToCloud(
+        firstCollection: DocumentReference,
+        secondCollection: CollectionReference,
+        dataOfDoctors: HashMap<String, String>,
+        dataOfPatient: HashMap<String, String>,
+        i:Patients
+    ) {
+        firstCollection.set(dataOfDoctors)
+            .addOnSuccessListener {
+                secondCollection.document(i.patientName).set(dataOfPatient)
+                    .addOnSuccessListener {
+                        Log.e(ContentValues.TAG,
+                            "DocumentSnapshot successfully written!")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(ContentValues.TAG,
+                            "Error writing document",
+                            e)
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e(
+                    ContentValues.TAG, "Error writing document", e)
+            }
+
+        Log.e("CLOUD", "Writing...")
     }
 
 
@@ -189,36 +305,42 @@ class DoctorsLandingPage : AppCompatActivity() {
     }
 
     private fun getDataFromDatabase() {
-        mMyDatabaseHelper= MyDatabaseHelper(this)
-        var cursor = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID","CAREGIVERS")
-        cursor.moveToFirst()
-
-        try {
-            doctorEmail = cursor.getString(3)
-            doctor_name.text = cursor.getString(1)
-            if(cursor.getString(4).toInt()==0)
-            {
-                doctor_profile_picture.setImageDrawable(
-                    ContextCompat.getDrawable(this,
-                        R.drawable.avatar_male
-                    ));
-            }else{
-                if(cursor.getString(4).toInt()==1)
-                {
-                    doctor_profile_picture.setImageDrawable(
+        mainViewModel.getCaregiverById(myLiveData.currentCaregiverMutable.value!!).observe(this,
+            Observer {
+                binding.doctorNameText = it[0].caregiverName
+                if(it[0].caregiverAvatar == 0){
+                    binding.doctorProfilePicture.setImageDrawable(
                         ContextCompat.getDrawable(this,
-                            R.drawable.avatar_female_a
-                        ));
-                }else{
-                    doctor_profile_picture.setImageDrawable(
-                        ContextCompat.getDrawable(this,
-                            R.drawable.avatar_female_b
+                            R.drawable.avatar_male
                         ));
                 }
-            }
-        }catch (e:Exception){
-            Toast.makeText(this,e.toString(), Toast.LENGTH_LONG).show()
-        }
+                else{
+                    if(it[0].caregiverAvatar == 1){
+                        binding.doctorProfilePicture.setImageDrawable(
+                            ContextCompat.getDrawable(this,
+                                R.drawable.avatar_female_a
+                            ));
+                    }else{
+                        binding.doctorProfilePicture.setImageDrawable(
+                            ContextCompat.getDrawable(this,
+                                R.drawable.avatar_female_b
+                            ));
+                    }
+                }
+            })
+
+        sessionRecycler()
+
+        mainViewModel.getSessionByCaregiver(myLiveData.currentCaregiverMutable.value!!).observe(this,
+            Observer {
+                if (!it.isNullOrEmpty()){
+                    scheduledSessionList.clear()
+                    for (i in it!!) {
+                        scheduledSessionList.add(ModelScheduledSession(i.sessionName,i.sessionId))
+                    }
+                    scheduledSessionsAdapter.notifyDataSetChanged()
+                }
+            })
     }
 
     private fun sessionRecycler(){
@@ -226,13 +348,6 @@ class DoctorsLandingPage : AppCompatActivity() {
         existingUsersRecyclerView.layoutManager = LinearLayoutManager(this,
             LinearLayoutManager.VERTICAL,false)
         existingUsersRecyclerView.adapter = scheduledSessionsAdapter
-
-        var cursor = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_SESSIONS","SESSIONS")
-        while (cursor.moveToNext()){
-            var model = ModelScheduledSession(cursor.getString(3),cursor.getString(0).toInt())
-            scheduledSessionList.add(model)
-        }
-        scheduledSessionsAdapter.notifyDataSetChanged()
     }
 
 
@@ -258,163 +373,21 @@ class DoctorsLandingPage : AppCompatActivity() {
 
 
     private fun bluetoothSetup() {
-
-        aSwitch = control_brake_state
-        torque = control_torque
-        angle = control_encoder_I
-        speed = control_encoder_II
-
-        inputPageConnection = 1
-
-        common.setClickForSideBar(hamburger,controls,sidebar,all_controls_card)
+        common.setClickForSideBar(binding.hamburger,binding.controls,binding.sidebar,binding.allControlsCard,this)
         val view = layoutInflater.inflate(R.layout.custom_dialog_layout_shutdown,null)
-        common.setClickForControls(view,sidebar,all_controls_card,controls,control_shutdown,control_reset,control_set_home,control_close,control_direction_clockwise,control_direction_anticlockwise,control_brake_state,control_refresh)
-
-        pairedDevicesViewHolder = PairedDevicesViewHolder(pairedDevicesList,this,progress_bar,sidebar,controls)
-
+        common.setClickForControls(view,binding.sidebar,binding.allControlsCard,binding.controls,binding.controlShutdown,binding.controlReset,binding.controlSetHome,binding.controlClose,binding.controlDirectionClockwise,binding.controlDirectionAnticlockwise,binding.controlBrakeState,binding.controlRefresh,this,binding.speedSlider)
         val pairedDevicesRecyclerView = findViewById<RecyclerView>(R.id.paired_devices_recycler_view)
         pairedDevicesRecyclerView.layoutManager = LinearLayoutManager(this)
-        pairedDevicesRecyclerView.adapter = pairedDevicesViewHolder
+        pairedDevicesRecyclerView.adapter = myLiveData.pairedDevicesViewHolder
+
+        binding.speedSlider!!.addOnChangeListener { slider, value, fromUser ->
+            binding.speedValue!!.text= value.toInt().toString()+" %"
+        }
 
     }
-
 
     fun onItemClick(position: Int) {
 
-    }
-
-    private fun exportDB() {
-        if(isExternalStorageWritable()) {
-            askForPermission()
-
-            val view = layoutInflater.inflate(R.layout.custom_dialog_layout_data_save,null)
-            val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
-            builder.setView(view)
-            builder.setCanceledOnTouchOutside(false)
-            builder.show()
-
-            val exportDir = File(Environment.getExternalStorageDirectory(), "Forhealth")
-            if (!exportDir.exists()) {
-                exportDir.mkdirs()
-            }
-            val file1 = File(exportDir, "forhealth_data_table_$doctorEmail.csv")
-            val file2 = File(exportDir, "forhealth_exercises_table_$doctorEmail.csv")
-            val file3 = File(exportDir, "forhealth_sessions_table_$doctorEmail.csv")
-            val file4 = File(exportDir, "forhealth_patients_table_$doctorEmail.csv")
-            val file5 = File(exportDir, "forhealth_caregivers_table_$doctorEmail.csv")
-            try {
-                file1.createNewFile()
-                val csvWrite1 = CSVWriter(FileWriter(file1))
-                val csvWrite2 = CSVWriter(FileWriter(file2))
-                val csvWrite3 = CSVWriter(FileWriter(file3))
-                val csvWrite4 = CSVWriter(FileWriter(file4))
-                val csvWrite5 = CSVWriter(FileWriter(file5))
-
-
-                val curCSV1 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_DATA","DATA")
-                val curCSV2 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_EXERCISE","EXERCISES")
-                val curCSV3 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_SESSIONS","SESSIONS")
-                val curCSV4 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID_IN_PATIENT","PATIENTS")
-                val curCSV5 = mMyDatabaseHelper!!.readDataByIntID(mAuthString,"CAREGIVER_ID","CAREGIVERS")
-
-                csvWrite1.writeNext(curCSV1.columnNames)
-                while (curCSV1.moveToNext()) {
-                    val arrStr = arrayOf(curCSV1.getString(0),
-                        curCSV1.getString(1),
-                        curCSV1.getString(2),
-                        curCSV1.getString(3),
-                        curCSV1.getString(4),
-                        curCSV1.getString(5),
-                        curCSV1.getString(6),
-                        curCSV1.getString(7))
-                    csvWrite1.writeNext(arrStr)
-                    Log.e("CSV", "Writing...")
-                }
-
-                csvWrite1.close()
-                curCSV1.close()
-
-                csvWrite2.writeNext(curCSV2.columnNames)
-                while (curCSV2.moveToNext()) {
-                    val arrStr = arrayOf(curCSV2.getString(0),
-                        curCSV2.getString(1),
-                        curCSV2.getString(2),
-                        curCSV2.getString(3),
-                        curCSV2.getString(4),
-                        curCSV2.getString(5),
-                        curCSV2.getString(6),
-                        curCSV2.getString(7))
-                    csvWrite2.writeNext(arrStr)
-                    Log.e("CSV", "Writing...")
-                }
-
-
-                csvWrite2.close()
-                curCSV2.close()
-
-                csvWrite3.writeNext(curCSV3.columnNames)
-                while (curCSV3.moveToNext()) {
-                    val arrStr = arrayOf(curCSV3.getString(0),
-                        curCSV3.getString(1),
-                        curCSV3.getString(2),
-                        curCSV3.getString(3),
-                        curCSV3.getString(4),
-                        curCSV3.getString(5),
-                        curCSV3.getString(6))
-                    csvWrite3.writeNext(arrStr)
-                    Log.e("CSV", "Writing...")
-                }
-
-                csvWrite3.close()
-                curCSV3.close()
-
-                csvWrite4.writeNext(curCSV4.columnNames)
-                while (curCSV4.moveToNext()) {
-                    val arrStr = arrayOf(curCSV4.getString(0),
-                        curCSV4.getString(1),
-                        curCSV4.getString(2),
-                        curCSV4.getString(3),
-                        curCSV4.getString(4),
-                        curCSV4.getString(5),
-                        curCSV4.getString(6),
-                        curCSV4.getString(7),
-                        curCSV4.getString(8))
-                    csvWrite4.writeNext(arrStr)
-                    Log.e("CSV", "Writing...")
-                }
-
-                csvWrite4.close()
-                curCSV4.close()
-
-                csvWrite5.writeNext(curCSV5.columnNames)
-                while (curCSV5.moveToNext()) {
-                    val arrStr = arrayOf(curCSV5.getString(0),
-                        curCSV5.getString(1),
-                        "XXXX",
-                        curCSV5.getString(3),
-                        curCSV5.getString(4))
-                    csvWrite5.writeNext(arrStr)
-                    Log.e("CSV", "Writing...")
-                }
-
-                csvWrite5.close()
-                curCSV5.close()
-
-                val sTimeout = 1000
-                Handler().postDelayed({
-                    builder.dismiss()
-                    Toast.makeText(this,"Done!",Toast.LENGTH_SHORT).show()
-
-                },sTimeout.toLong())
-                Log.e("CSV", "Writing Done!")
-
-            } catch (sqlEx: Exception) {
-                Log.e("CSV", sqlEx.message, sqlEx)
-            }
-        }else{
-            askForPermission()
-            Log.e("CSV", "Need permission")
-        }
     }
 
     private fun askForPermission(){
@@ -423,6 +396,176 @@ class DoctorsLandingPage : AppCompatActivity() {
                 val getPermission = Intent()
                 getPermission.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
                 startActivity(getPermission)
+            }else{
+
+                val view = layoutInflater.inflate(R.layout.custom_dialog_layout_data_save,null)
+                val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
+                builder.setView(view)
+                builder.setCanceledOnTouchOutside(false)
+                builder.show()
+
+                val exportDir = File(Environment.getExternalStorageDirectory(), "Forhealth")
+                if (!exportDir.exists()) {
+                    exportDir.mkdirs()
+                }
+                val fileCaregiver = File(exportDir, "for_health_caregiver_table_${myLiveData.doctorEmailMutable.value!!}.csv")
+                val filePatient = File(exportDir, "for_health_patient_table_${myLiveData.doctorEmailMutable.value!!}.csv")
+                val fileSession = File(exportDir, "for_health_session_table_${myLiveData.doctorEmailMutable.value!!}.csv")
+                val fileExercise = File(exportDir, "for_health_exercise_table_${myLiveData.doctorEmailMutable.value!!}.csv")
+                val fileData = File(exportDir, "for_health_data_table_${myLiveData.doctorEmailMutable.value!!}.csv")
+
+                try {
+                    fileCaregiver.createNewFile()
+                    filePatient.createNewFile()
+                    fileSession.createNewFile()
+                    fileExercise.createNewFile()
+                    fileData.createNewFile()
+
+                    mainViewModel.getCaregiverById(myLiveData.currentCaregiverMutable.value!!).observe(this, Observer {
+                        if(!it.isNullOrEmpty()){
+                            val csvWrite = CSVWriter(FileWriter(fileCaregiver))
+                            val arrStr = arrayOf("CAREGIVER ID",
+                                "CAREGIVER NAME",
+                                "CAREGIVER EMAIL",
+                                "CAREGIVER AVATAR",
+                                "CAREGIVER PIN")
+                            csvWrite.writeNext(arrStr)
+                            for (i in it) {
+                                val arrStr = arrayOf(i.caregiverId.toString(),
+                                    i.caregiverName,
+                                    i.caregiverEmail,
+                                    i.caregiverAvatar.toString(),
+                                    "XXXX")
+                                csvWrite.writeNext(arrStr)
+                                Log.e("CSV", "Writing...")
+                            }
+                            csvWrite.close()
+                        }
+                    })
+
+                    mainViewModel.getPatientByCaregiver(myLiveData.currentCaregiverMutable.value!!).observe(this, Observer {
+                        if(!it.isNullOrEmpty()){
+                            val csvWrite = CSVWriter(FileWriter(filePatient))
+                            val arrStr = arrayOf(
+                                "PATIENT ID",
+                                "PATIENT AVATAR",
+                                "PATIENT NAME",
+                                "PATIENT AGE",
+                                "PATIENT SEX",
+                                "PATIENT WEIGHT" ,
+                                "PATIENT CONTACT",
+                                "DATE")
+                            csvWrite.writeNext(arrStr)
+                            for (i in it) {
+                                val arrStr = arrayOf(
+                                    i.patientId.toString(),
+                                    i.patientAvatar.toString(),
+                                    i.patientName,
+                                    i.patientAge.toString(),
+                                    i.patientSex,
+                                    i.patientWeight.toString() ,
+                                    i.patientContact.toString(),
+                                    i.patientDate.toString())
+                                csvWrite.writeNext(arrStr)
+                                Log.e("CSV", "Writing...")
+                            }
+                            csvWrite.close()
+                        }
+                    })
+
+                    mainViewModel.getSessionByCaregiver(myLiveData.currentCaregiverMutable.value!!).observe(this, Observer {
+                        if(!it.isNullOrEmpty()){
+                            val csvWrite = CSVWriter(FileWriter(fileSession))
+                            val arrStr = arrayOf(
+                                "SESSION ID",
+                                "CAREGIVER ID IN SESSION",
+                                "PATIENT ID IN SESSION",
+                                "SESSION NAME",
+                                "DATE" ,
+                                "TIME")
+                            csvWrite.writeNext(arrStr)
+                            for (i in it) {
+                                val arrStr = arrayOf(
+                                    i.sessionId.toString(),
+                                    i.caregiverIdInSession.toString(),
+                                    i.patientIdInSession.toString(),
+                                    i.sessionName,
+                                    i.sessionDate.toString() ,
+                                    i.sessionTime.toString())
+                                csvWrite.writeNext(arrStr)
+                                Log.e("CSV", "Writing...")
+                            }
+                            csvWrite.close()
+                        }
+                    })
+
+                    mainViewModel.getExerciseByCaregiver(myLiveData.currentCaregiverMutable.value!!).observe(this, Observer {
+                        if(!it.isNullOrEmpty()){
+                            val csvWrite = CSVWriter(FileWriter(fileExercise))
+                            val arrStr = arrayOf(
+                                "EXERCISE ID",
+                                "CAREGIVER ID IN EXERCISE",
+                                "PATIENT ID IN EXERCISE",
+                                "SESSION ID IN EXERCISE",
+                                "EXERCISE PARAMETERS" ,
+                                "DATE",
+                                "TIME")
+                            csvWrite.writeNext(arrStr)
+                            for (i in it) {
+                                val arrStr = arrayOf(
+                                    i.ExerciseId.toString(),
+                                    i.caregiverIdInExercise.toString(),
+                                    i.patientIdInExercise.toString(),
+                                    i.sessionIdInExercise.toString(),
+                                    i.exerciseParameters ,
+                                    i.exerciseDate.toString(),
+                                    i.exerciseTime.toString())
+                                csvWrite.writeNext(arrStr)
+                                Log.e("CSV", "Writing...")
+                            }
+                            csvWrite.close()
+                        }
+                    })
+
+                    mainViewModel.getDataByCaregiver(myLiveData.currentCaregiverMutable.value!!).observe(this, Observer {
+                        if(!it.isNullOrEmpty()){
+                            val csvWrite = CSVWriter(FileWriter(fileData))
+                            val arrStr = arrayOf(
+                                "DATA ID",
+                                "CAREGIVER ID IN DATA",
+                                "PATIENT ID IN DATA",
+                                "EXERCISE ID IN DATA",
+                                "EXERCISE DATA",
+                                "DATE",
+                                "TIME")
+                            csvWrite.writeNext(arrStr)
+                            for (i in it) {
+                                val arrStr = arrayOf(
+                                    i.dataId.toString(),
+                                    i.caregiverIdInData.toString(),
+                                    i.patientIdInData.toString(),
+                                    i.exerciseIdInData.toString(),
+                                    i.exerciseData ,
+                                    i.exerciseDate.toString(),
+                                    i.exerciseTime.toString())
+                                csvWrite.writeNext(arrStr)
+                                Log.e("CSV", "Writing...")
+                            }
+                            csvWrite.close()
+                        }
+                    })
+
+                    val sTimeout = 1000
+                    Handler().postDelayed({
+                        builder.dismiss()
+                        Toast.makeText(this,"Done!",Toast.LENGTH_SHORT).show()
+
+                    },sTimeout.toLong())
+                    Log.e("CSV", "Writing Done!")
+
+                } catch (sqlEx: Exception) {
+                    Log.e("CSV", sqlEx.message, sqlEx)
+                }
             }
         }
     }
@@ -431,5 +574,15 @@ class DoctorsLandingPage : AppCompatActivity() {
         val state = Environment.getExternalStorageState()
         return Environment.MEDIA_MOUNTED == state
     }
+
+    private fun exportDB() {
+        if(isExternalStorageWritable()) {
+            askForPermission()
+        }else{
+            askForPermission()
+            Log.e("CSV", "Need permission")
+        }
+    }
+
 
 }

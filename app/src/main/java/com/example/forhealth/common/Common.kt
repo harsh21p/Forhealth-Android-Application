@@ -1,35 +1,54 @@
 package com.example.forhealth.common
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Handler
-import android.os.Message
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.example.forhealth.R
-import com.example.forhealth.bluetooth.Bluetooth
-import com.example.forhealth.bluetooth.StaticReference
-import com.example.forhealth.bluetooth.StaticReference.*
+import com.example.forhealth.dagger.BluetoothQualifier
+import com.example.forhealth.dagger.MyLiveData
+import com.example.forhealth.dagger.Services
+import com.example.forhealth.database.DataRepository
+import com.example.forhealth.database.DatabaseViewModel
+import com.example.forhealth.database.MyDatabaseInstance
 import com.example.forhealth.datamodel.ModelPairedDevices
-import kotlinx.android.synthetic.main.doctors_landing_page.*
-import kotlinx.android.synthetic.main.signup.*
-import kotlinx.android.synthetic.main.splash_screen.*
+import com.google.android.material.slider.Slider
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class Common(context: Context){
+@Singleton
+class Common @Inject constructor(context: Context, @BluetoothQualifier bluetooth: Services, database:MyDatabaseInstance) : Services{
     var mContext = context
-    var bluetooth = Bluetooth(mContext)
+    var bluetooth = bluetooth
+    var selectedAvatar = 0
+    var selectedPatientAvatar = 0
+    var mBtAdapter:BluetoothAdapter?=null
+    var mainViewModel: DatabaseViewModel
+    private var myLiveData: MyLiveData
 
-    fun hideKeyboard() {
+    init {
+        mainViewModel = DatabaseViewModel(DataRepository(database.databaseDao()))
+        myLiveData = MyLiveData.getMyLiveData(database.databaseDao(),bluetooth)
+    }
+
+    override fun hideKeyboard(mContext:Context) {
+
         val imm = mContext
             .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (imm.isAcceptingText) {
@@ -45,8 +64,8 @@ class Common(context: Context){
         }
     }
 
-    fun comingSoonDialogBox(view:View) {
-        val builder = AlertDialog.Builder(mContext, R.style.CustomAlertDialog).create()
+    override fun comingSoonDialogBox(view:View,context:Context) {
+        val builder = AlertDialog.Builder(context, R.style.CustomAlertDialog).create()
         val  okButton = view.findViewById<CardView>(R.id.custom_dialog_ok_button)
         builder.setView(view)
         okButton.setOnClickListener {
@@ -56,132 +75,121 @@ class Common(context: Context){
         builder.show()
     }
 
-    fun avatarDialogBox(imageView:ImageView,view:View) {
-        val builder = AlertDialog.Builder(mContext, R.style.CustomAlertDialog).create()
+    override fun avatarDialogBox(view:View,context:Context){
+        val builder = AlertDialog.Builder(context, R.style.CustomAlertDialog).create()
         val  avatarA = view.findViewById<CardView>(R.id.custom_dialog_avatar_a)
         val  avatarB = view.findViewById<CardView>(R.id.custom_dialog_avatar_b)
         val  avatarC = view.findViewById<CardView>(R.id.custom_dialog_avatar_c)
         builder.setView(view)
         avatarA.setOnClickListener {
-            imageView.setImageDrawable(
-                ContextCompat.getDrawable(mContext,
-                    R.drawable.avatar_male
-
-                ));
-            selectedAvatar=0
+            selectedAvatar = 0
             builder.dismiss()
         }
         avatarB.setOnClickListener {
-            imageView.setImageDrawable(
-                ContextCompat.getDrawable(mContext,
-                    R.drawable.avatar_female_a
-                ));
-            selectedAvatar=1
+            selectedAvatar = 1
             builder.dismiss()
         }
         avatarC.setOnClickListener {
-            imageView.setImageDrawable(
-                ContextCompat.getDrawable(mContext,
-                    R.drawable.avatar_female_b
-                ));
-            selectedAvatar=2
-            builder.dismiss()
+            selectedAvatar = 2
 
+            builder.dismiss()
         }
+        builder.setOnDismissListener(DialogInterface.OnDismissListener {
+            myLiveData.setAvatarSelected(selectedAvatar)
+        })
         builder.setCanceledOnTouchOutside(true)
         builder.show()
 
     }
 
-    fun avatarDialogBoxForPatient(imageView:ImageView,view:View) {
-        val builder = AlertDialog.Builder(mContext, R.style.CustomAlertDialog).create()
+    override fun avatarDialogBoxForPatient(view:View,context: Context) {
+        val builder = AlertDialog.Builder(context, R.style.CustomAlertDialog).create()
         val  avatarA = view.findViewById<CardView>(R.id.custom_dialog_avatar_a_p)
         val  avatarB = view.findViewById<CardView>(R.id.custom_dialog_avatar_b_p)
         val  avatarC = view.findViewById<CardView>(R.id.custom_dialog_avatar_c_p)
         val  avatarD = view.findViewById<CardView>(R.id.custom_dialog_avatar_d_p)
         builder.setView(view)
         avatarA.setOnClickListener {
-            imageView.setImageDrawable(
-                ContextCompat.getDrawable(mContext,
-                    R.drawable.male_avatar_patient_a
-
-                ));
             selectedPatientAvatar=0
             builder.dismiss()
         }
         avatarB.setOnClickListener {
-            imageView.setImageDrawable(
-                ContextCompat.getDrawable(mContext,
-                    R.drawable.male_avatar_patient_b
-                ));
             selectedPatientAvatar=1
             builder.dismiss()
         }
         avatarC.setOnClickListener {
-            imageView.setImageDrawable(
-                ContextCompat.getDrawable(mContext,
-                    R.drawable.female_avatar_patient_a
-                ));
             selectedPatientAvatar=2
             builder.dismiss()
-
         }
 
         avatarD.setOnClickListener {
-            imageView.setImageDrawable(
-                ContextCompat.getDrawable(mContext,
-                    R.drawable.female_avatar_patient_b
-                ));
             selectedPatientAvatar=3
             builder.dismiss()
 
         }
+        builder.setOnDismissListener(DialogInterface.OnDismissListener {
+            myLiveData.setAvatarSelectedPatient(selectedPatientAvatar)
+        })
         builder.setCanceledOnTouchOutside(false)
         builder.show()
-
     }
 
-
     @SuppressLint("MissingPermission")
-    fun setClickForSideBar(hamburger:ImageView, controls:CardView, sidebar:CardView, all_controls_card:CardView){
+    override fun setClickForSideBar(hamburger:ImageView, controls:CardView, sidebar:CardView, all_controls_card:CardView,mContext:Context){
         hamburger.setOnClickListener(View.OnClickListener {
-            controls.visibility=View.GONE
-            if(Connection){
-                controls.visibility=View.VISIBLE
-            }else{
-                Toast.makeText(mContext,"Device not Connected", Toast.LENGTH_SHORT).show()
-            }
-            mBtAdapter =  BluetoothAdapter.getDefaultAdapter()
-            if(hamburgerVisibilityManager == 1){
-                if(!mBtAdapter.isEnabled) {
-                    var bluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                    startActivity(mContext,bluetoothIntent,null)
-                    findPairedDevices()
-                }else{
-                    findPairedDevices()
-                }
-                sidebar.visibility=View.VISIBLE
-                all_controls_card.visibility=View.GONE
-                hamburgerVisibilityManager = 0
-            }else{
-                sidebar.visibility=View.GONE
-                all_controls_card.visibility=View.GONE
-                hamburgerVisibilityManager = 1
-            }
+            bluetoothInit(controls,sidebar,all_controls_card,mContext)
         })
     }
 
-    @SuppressLint("MissingPermission")
-    fun findPairedDevices(){
-        pairedDevicesList.clear()
+
+    override fun bluetoothInit(controls:CardView,sidebar:CardView,all_controls_card: CardView,mContext: Context){
+        controls.visibility = View.GONE
+        if(myLiveData.btConnectionMutable.value!!){
+            controls.visibility=View.VISIBLE
+        }else{
+            Toast.makeText(mContext,"Device not Connected", Toast.LENGTH_SHORT).show()
+        }
+
+        mBtAdapter =  BluetoothAdapter.getDefaultAdapter()
+
+        if(sidebar.visibility == View.GONE){
+
+            if(!mBtAdapter!!.isEnabled) {
+                var bluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivity(mContext,bluetoothIntent,null)
+                findPairedDevices()
+            }else{
+                findPairedDevices()
+            }
+            sidebar.visibility = View.VISIBLE
+            all_controls_card.visibility=View.GONE
+        }else{
+            sidebar.visibility=View.GONE
+            all_controls_card.visibility=View.GONE
+        }
+    }
+
+
+    @SuppressLint("MissingPermission", "NotifyDataSetChanged")
+    override fun findPairedDevices(){
+
+        myLiveData.pairedDevicesList.clear()
+
         val pairedDevices = mBtAdapter!!.bondedDevices
+
         if (pairedDevices.size > 0) {
+
             for (device in pairedDevices) {
+
                 try{
+
                     var device = ModelPairedDevices(device.name, device.address)
-                    pairedDevicesList.add(device)
+                    myLiveData.pairedDevicesList!!.add(device)
+
                 }finally {
-                    pairedDevicesViewHolder.notifyDataSetChanged()
+
+                    myLiveData.pairedDevicesViewHolder.notifyDataSetChanged()
+
                 }
             }
         }
@@ -191,28 +199,20 @@ class Common(context: Context){
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    fun setClickForControls(view: View, sidebar: CardView, all_controls_card: CardView, controls: CardView, control_shutdown:CardView, control_reset:CardView
-                            , control_set_home:CardView, control_close:CardView, control_direction_clockwise:CardView, control_direction_anticlockwise:CardView, control_brake_state:Switch, control_refresh:CardView){
+    override fun setClickForControls(view: View, sidebar: CardView, all_controls_card: CardView, controls: CardView, control_shutdown:CardView, control_reset:CardView
+                            , control_set_home:CardView, control_close:CardView, control_direction_clockwise:CardView, control_direction_anticlockwise:CardView, control_brake_state:Switch, control_refresh:CardView,context: Context,speed_slider:Slider){
 
         controls.setOnClickListener(View.OnClickListener {
-            if(StaticReference.Connection){
+            if(myLiveData.btConnectionMutable.value!!){
                 sidebar.visibility=View.GONE
                 all_controls_card.visibility=View.VISIBLE
-                hamburgerVisibilityManager = 1
-                bluetooth.sendMessage("crall",mContext)
-
-            }else{
-                Toast.makeText(mContext,"Connect to device", Toast.LENGTH_SHORT).show()
-                controls.visibility=View.GONE
-                all_controls_card.visibility=View.GONE
-                hamburgerVisibilityManager = 1
-                sidebar.visibility=View.VISIBLE
+                bluetooth.sendMessage("rf")
             }
         })
 
         control_shutdown.setOnClickListener(View.OnClickListener {
-            if(StaticReference.Connection) {
-                dialogueBoxShutdown(view,all_controls_card)
+            if(myLiveData.btConnectionMutable.value!!) {
+                dialogueBoxShutdown(view,all_controls_card,context)
             }else{
                 Toast.makeText(mContext,"Device not Connected", Toast.LENGTH_SHORT).show()
             }
@@ -220,8 +220,8 @@ class Common(context: Context){
 
         control_reset.setOnClickListener(View.OnClickListener {
 
-            if(StaticReference.Connection) {
-                bluetooth.sendMessage("crall", mContext)
+            if(myLiveData.btConnectionMutable.value!!) {
+                bluetooth.sendMessage("rt")
 
             }else{
                 Toast.makeText(mContext,"Device not Connected", Toast.LENGTH_SHORT).show()
@@ -230,8 +230,8 @@ class Common(context: Context){
         })
 
         control_set_home.setOnClickListener(View.OnClickListener {
-            if(StaticReference.Connection) {
-                bluetooth.sendMessage("sethome", mContext)
+            if(myLiveData.btConnectionMutable.value!!) {
+                bluetooth.sendMessage("sh")
 
             }else{
                 Toast.makeText(mContext,"Device not Connected", Toast.LENGTH_SHORT).show()
@@ -240,21 +240,20 @@ class Common(context: Context){
 
         control_close.setOnClickListener(View.OnClickListener {
             all_controls_card.visibility=View.GONE
-            hamburgerVisibilityManager = 1
             sidebar.visibility=View.GONE
-//              bluetooth.sendMessage("cds1",context)
+              bluetooth.sendMessage("cc")
         })
 
         control_direction_clockwise.setOnTouchListener { v, event ->
             when (event?.action) {
-                MotionEvent.ACTION_DOWN -> bluetooth.sendMessage("cc1", mContext)
-                MotionEvent.ACTION_UP -> bluetooth.sendMessage("cs1", mContext)
+                MotionEvent.ACTION_DOWN -> bluetooth.sendMessage("fd,${speed_slider.value.toInt()},zz")
+                MotionEvent.ACTION_UP -> bluetooth.sendMessage(",s,")
             }
             v?.onTouchEvent(event) ?: true
         }
 
         control_direction_clockwise.setOnClickListener(View.OnClickListener {
-            if(StaticReference.Connection) {
+            if(myLiveData.btConnectionMutable.value!!) {
             }else{
                 Toast.makeText(mContext,"Device not Connected", Toast.LENGTH_SHORT).show()
             }
@@ -262,13 +261,13 @@ class Common(context: Context){
 
         control_direction_anticlockwise.setOnTouchListener { v, event ->
             when (event?.action) {
-                MotionEvent.ACTION_DOWN -> bluetooth.sendMessage("ca1", mContext)
-                MotionEvent.ACTION_UP -> bluetooth.sendMessage("cs1", mContext)
+                MotionEvent.ACTION_DOWN -> bluetooth.sendMessage("bd,${speed_slider.value.toInt()},zz")
+                MotionEvent.ACTION_UP -> bluetooth.sendMessage(",s,")
             }
             v?.onTouchEvent(event) ?: true
         }
         control_direction_anticlockwise.setOnClickListener(View.OnClickListener {
-            if(StaticReference.Connection) {
+            if(myLiveData.btConnectionMutable.value!!) {
 
             }else{
                 Toast.makeText(mContext,"Device not Connected", Toast.LENGTH_SHORT).show()
@@ -277,25 +276,25 @@ class Common(context: Context){
 
         control_brake_state.setOnClickListener(View.OnClickListener {
             if(control_brake_state.isChecked){
-                bluetooth.sendMessage("cebo",mContext)
+                bluetooth.sendMessage("bo")
                 control_brake_state.isChecked=true
             }else{
                 control_brake_state.isChecked=false
-                bluetooth.sendMessage("cebf",mContext)
+                bluetooth.sendMessage("bf")
             }
         })
 
         control_refresh.setOnClickListener(View.OnClickListener {
-            if(StaticReference.Connection) {
-                bluetooth.sendMessage("crall", mContext)
+            if(myLiveData.btConnectionMutable.value!!) {
+                bluetooth.sendMessage("rf")
             }else{
                 Toast.makeText(mContext,"Device not Connected", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-    fun dialogueBoxShutdown(view: View,all_controls_card:CardView,) {
-        val builder = AlertDialog.Builder(mContext, R.style.CustomAlertDialog).create()
+    override fun dialogueBoxShutdown(view: View,all_controls_card:CardView,context: Context) {
+        val builder = AlertDialog.Builder(context, R.style.CustomAlertDialog).create()
         val  yes = view.findViewById<CardView>(R.id.shutdown_dialog_yes_button)
         val  no = view.findViewById<CardView>(R.id.shutdown_dialog_cancel_button)
         if(view.parent != null){
@@ -303,9 +302,7 @@ class Common(context: Context){
         }
         builder.setView(view)
         yes.setOnClickListener {
-            bluetooth.sendMessage("shutdown",mContext)
-            all_controls_card.visibility=View.GONE
-            hamburgerVisibilityManager = 1
+            bluetooth.sendMessage("sd")
             builder.dismiss()
         }
         no.setOnClickListener {
@@ -315,9 +312,9 @@ class Common(context: Context){
         builder.show()
     }
 
-    fun textDilog(view:View) {
+    override fun textDilog(view:View,context: Context) {
 
-        val builder = AlertDialog.Builder(mContext, R.style.CustomAlertDialog).create()
+        val builder = AlertDialog.Builder(context, R.style.CustomAlertDialog).create()
         builder.setView(view)
         builder.setCanceledOnTouchOutside(true)
         builder.show()
@@ -328,6 +325,29 @@ class Common(context: Context){
         }, splashScreenTimeout.toLong())
 
 
+    }
+
+    override fun setupBT(address: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun messageReceived(readData: String) {
+        TODO("Not yet implemented")
+    }
+
+
+    override fun sendMessage(msg: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun stopChat() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onItemClick(
+        position: Int
+    ) {
+        TODO("Not yet implemented")
     }
 
 

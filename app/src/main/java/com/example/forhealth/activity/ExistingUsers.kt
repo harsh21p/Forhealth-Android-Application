@@ -16,22 +16,39 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
 import com.example.forhealth.adapter.ExistingUsersViewHolder
-import com.example.forhealth.bluetooth.StaticReference.*
-import com.example.forhealth.database.MyDatabaseHelper
+import com.example.forhealth.dagger.ApplicationScope
+import com.example.forhealth.dagger.BluetoothQualifier
+import com.example.forhealth.dagger.MyLiveData
+import com.example.forhealth.dagger.Services
+import com.example.forhealth.database.DataRepository
+import com.example.forhealth.database.DatabaseViewModel
+import com.example.forhealth.database.DatabaseViewModelFactory
+import com.example.forhealth.database.MyDatabaseInstance
 import com.example.forhealth.datamodel.ModelExistingUsers
 import kotlinx.android.synthetic.main.existing_users.*
+import javax.inject.Inject
 
 class ExistingUsers : AppCompatActivity() {
 
     private var existingUsersList = ArrayList<ModelExistingUsers>()
     private val existingUsersAdapter =  ExistingUsersViewHolder(existingUsersList,this)
-    private var mMyDatabaseHelper:MyDatabaseHelper?=null
-    private var position = 9999
-    private var identifier = 0
+    private var deleteOrLogin = 0
+
+    lateinit var mainViewModel: DatabaseViewModel
+
+    @Inject
+    @BluetoothQualifier lateinit var bluetooth: Services
+
+    @Inject
+    lateinit var myDatabaseInstance: MyDatabaseInstance
+
+    lateinit var myLiveData: MyLiveData
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -46,17 +63,23 @@ class ExistingUsers : AppCompatActivity() {
         val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN)
         decorView.systemUiVisibility = uiOptions
 
-        mAuthString = 9999
-        selectedPatientId = 9999
-        currentSessionId = 9999
-        selectedSessionName = null
+        var myComponent = (application as ApplicationScope).myComponent
+        myComponent.inject(this)
+
+        val dao = myDatabaseInstance.databaseDao()
+        val repository = DataRepository(dao)
+
+        myLiveData = MyLiveData.getMyLiveData(dao,bluetooth)
+
+        mainViewModel = ViewModelProvider(this, DatabaseViewModelFactory(repository)).get(
+            DatabaseViewModel::class.java)
+
 
         back_to_splash_screen.setOnClickListener(View.OnClickListener {
             val iSplashScreen = Intent(this@ExistingUsers, SplashScreen::class.java)
             startActivity(iSplashScreen)
             finish()
         })
-        mMyDatabaseHelper= MyDatabaseHelper(this)
 
         back_button.setOnClickListener(View.OnClickListener {
             val iDoctorsLogin = Intent(this@ExistingUsers, DoctorsLoginPage::class.java)
@@ -69,27 +92,19 @@ class ExistingUsers : AppCompatActivity() {
             LinearLayoutManager.HORIZONTAL,false)
         existingUsersRecyclerView.adapter = existingUsersAdapter
 
-
-        var cursor = mMyDatabaseHelper!!.readData("CAREGIVERS")
-//        Toast.makeText(this, dbpath,Toast.LENGTH_SHORT).show()
-
-        while (cursor.moveToNext()){
-
-            try {
-                var model = ModelExistingUsers(
-                    1,
-                    cursor.getString(1),
-                    cursor.getString(4).toInt(),
-                    cursor.getString(0).toInt()
-                )
-                existingUsersList.add(model)
-            }catch (e:Exception){
-                mMyDatabaseHelper!!.deleteIntEntry(cursor.getString(0).toString(),"CAREGIVER_ID","CAREGIVERS")
-                Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show()
+        mainViewModel.getCaregiver().observe(this, Observer {
+            if (!it.isNullOrEmpty()){
+                existingUsersList.clear()
+                for (i in it!!) {
+                    existingUsersList.add(ModelExistingUsers(1,i.caregiverName,i.caregiverAvatar,i.caregiverId,i.caregiverPin,i.caregiverEmail))
+                }
+                existingUsersList.add(ModelExistingUsers(2,"Someone",2,0,0,""))
+            }else{
+                startActivity(Intent(this@ExistingUsers, Login::class.java))
+                finish()
             }
-        }
-        existingUsersList.add(ModelExistingUsers(2,"Someone",2,0))
-        existingUsersAdapter.notifyDataSetChanged()
+            existingUsersAdapter.notifyDataSetChanged()
+        })
 
     }
 
@@ -100,15 +115,15 @@ class ExistingUsers : AppCompatActivity() {
             startActivity(iLogin)
             finish()
         }else{
+            myLiveData.setCurrentCaregiver(existingUsersList[position].doctorId)
+            myLiveData.setEmailCurrentCaregiver(existingUsersList[position].email)
             val view = layoutInflater.inflate(R.layout.custom_dialog_login_pin,null)
-            mAuthString = existingUsersList[position].doctorId
-            loginPinDialogBox(this,view,existingUsersList[position].nameOfDoctor,existingUsersList[position].avatarOfDoctor)
-
+            loginPinDialogBox(this,view,existingUsersList[position].nameOfDoctor,existingUsersList[position].avatarOfDoctor,position)
         }
 
     }
 
-    private fun loginPinDialogBox(mContext: Context, view:View,name:String,avatar:Int) {
+    private fun loginPinDialogBox(mContext: Context, view:View,name:String,avatar:Int,position: Int) {
         val builder = AlertDialog.Builder(mContext, R.style.CustomAlertDialog).create()
         val  avatarImage: ImageView = view.findViewById<ImageView>(R.id.custom_dialog_existing_user_avatar)
         val  avatarName: TextView = view.findViewById<TextView>(R.id.custom_dialog_existing_user_name)
@@ -191,38 +206,23 @@ class ExistingUsers : AppCompatActivity() {
                     Handler().postDelayed({
 
                         var pin = idEdtPin1.text.toString() + idEdtPin2.text.toString() + idEdtPin3.text.toString() + idEdtPin4.text.toString()
-                        var cursor = mMyDatabaseHelper!!.readDataByIntID(mAuthString, "CAREGIVER_ID","CAREGIVERS")
-                        cursor.moveToFirst()
-                        if (pin == cursor.getString(2)) {
-
+                        //get pin from table
+                        if (pin.toInt().equals(existingUsersList[position].pin)) {
+                            myLiveData.setCurrentCaregiver(existingUsersList[position].doctorId)
                             builder.dismiss()
                             progressBar.visibility = View.INVISIBLE
-                            if(identifier != 1) {
+                            if(deleteOrLogin != 1) {
                                 val iDoctorsLandingPage =
                                     Intent(this@ExistingUsers, DoctorsLandingPage::class.java)
                                 startActivity(iDoctorsLandingPage)
                                 finish()
 
                             }else{
-                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
-                                    "CAREGIVER_ID",
-                                    "CAREGIVERS")
-                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
-                                    "CAREGIVER_ID_IN_PATIENT",
-                                    "PATIENTS")
-                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
-                                    "CAREGIVER_ID_IN_EXERCISE",
-                                    "EXERCISES")
-                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
-                                    "CAREGIVER_ID_IN_SESSIONS",
-                                    "SESSIONS")
-                                mMyDatabaseHelper!!.deleteIntEntry(mAuthString.toString(),
-                                    "CAREGIVER_ID_IN_DATA",
-                                    "DATA")
-                                existingUsersList.removeAt(position)
-                                existingUsersAdapter.notifyDataSetChanged()
-                                identifier = 0
+                                // delete caregiver
 
+                                mainViewModel.deleteCaregiver(myLiveData.currentCaregiverMutable.value!!)
+                                Toast.makeText(applicationContext,"User deleted",Toast.LENGTH_SHORT).show()
+                                existingUsersAdapter.notifyDataSetChanged()
                                 if(existingUsersList.isEmpty()){
                                     var iLogin = Intent(this@ExistingUsers, Login::class.java)
                                     startActivity(iLogin)
@@ -232,10 +232,11 @@ class ExistingUsers : AppCompatActivity() {
 
                         } else {
                             progressBar.visibility=View.INVISIBLE
+
                             Toast.makeText(mContext, "Wrong pin try again ", Toast.LENGTH_SHORT)
                                 .show()
                             builder.dismiss()
-                            identifier = 0
+
                         }
 
                     }, timeout.toLong())
@@ -256,7 +257,7 @@ class ExistingUsers : AppCompatActivity() {
 
         builder.setCanceledOnTouchOutside(true)
         builder.setOnDismissListener(DialogInterface.OnDismissListener {
-            identifier = 0
+            deleteOrLogin = 0
         })
         builder.show()
 
@@ -264,15 +265,13 @@ class ExistingUsers : AppCompatActivity() {
     }
 
     fun onDeleteClick(position: Int) {
-
-        mAuthString = existingUsersList[position].doctorId
+        myLiveData.setCurrentCaregiver(existingUsersList[position].doctorId)
         val view = layoutInflater.inflate(R.layout.custom_dialog_layout_delete,null)
         dialogueBoxDelete(view,position)
-
     }
 
-    fun dialogueBoxDelete(view: View,position: Int) {
-        this.position = position
+    private fun dialogueBoxDelete(view: View, position: Int) {
+        position
         val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog).create()
         val  yes = view.findViewById<CardView>(R.id.delete_dialog_yes_button)
         val  no = view.findViewById<CardView>(R.id.delete_dialog_cancel_button)
@@ -281,9 +280,9 @@ class ExistingUsers : AppCompatActivity() {
         }
         builder.setView(view)
         yes.setOnClickListener {
-            identifier = 1
+            deleteOrLogin = 1
             val view = layoutInflater.inflate(R.layout.custom_dialog_login_pin,null)
-            loginPinDialogBox(this,view,existingUsersList[position].nameOfDoctor,existingUsersList[position].avatarOfDoctor)
+            loginPinDialogBox(this,view,existingUsersList[position].nameOfDoctor,existingUsersList[position].avatarOfDoctor,position)
             builder.dismiss()
         }
         no.setOnClickListener {

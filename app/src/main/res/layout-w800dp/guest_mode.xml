@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/main_layout"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="tourqe"
+            type="String" />
+        <variable
+            name="angle"
+            type="String" />
+        <variable
+            name="speed"
+            type="String" />
+        <variable
+            name="doctorNameText"
+            type="String" />
+    </data>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="MissingDefaultResource">
+    tools:ignore="MissingDefaultResource"
+    tools:context=".activity.GuestMode">
 
     <ImageView
         android:id="@+id/imageView4"
@@ -377,7 +394,7 @@
                                         android:layout_marginLeft="30dp"
                                         android:fontFamily="@font/raleway_medium"
                                         android:gravity="center"
-                                        android:text="0 nm"
+                                        android:text="@{tourqe}"
                                         android:textColor="#46555C"
                                         android:textFontWeight="700"
                                         android:textSize="22px" />
@@ -410,7 +427,7 @@
                                         android:layout_marginLeft="10dp"
                                         android:fontFamily="@font/raleway_medium"
                                         android:gravity="center"
-                                        android:text="000 deg"
+                                        android:text="@{angle}"
                                         android:textColor="#46555C"
                                         android:textFontWeight="700"
                                         android:textSize="22px" />
@@ -444,7 +461,7 @@
                                         android:layout_marginLeft="10dp"
                                         android:fontFamily="@font/raleway_medium"
                                         android:gravity="center"
-                                        android:text="000 rpm"
+                                        android:text="@{speed}"
                                         android:textColor="#46555C"
                                         android:textFontWeight="700"
                                         android:textSize="22px" />
@@ -483,6 +500,48 @@
 
                         </androidx.cardview.widget.CardView>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="17dp"
+                                android:layout_weight="5"
+                                android:src="@drawable/picture_speed" />
+
+                            <com.google.android.material.slider.Slider
+                                android:id="@+id/speed_slider"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:value="1"
+                                android:valueFrom="1"
+                                android:valueTo="100"
+                                app:thumbColor="#3A5A8A"
+                                app:thumbStrokeColor="@color/white"
+                                app:thumbStrokeWidth="1dp"
+                                app:trackColorActive="#3A5A8A"
+                                app:trackColorInactive="#FFFFFF"
+                                app:trackHeight="14px" />
+
+                            <TextView
+                                android:id="@+id/speed_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_weight="5"
+                                android:gravity="center"
+                                android:text="1 %"
+                                android:textColor="@color/black"
+                                android:textSize="12dp" />
+
+                        </LinearLayout>
                     </LinearLayout>
                 </ScrollView>
             </androidx.cardview.widget.CardView>
@@ -939,6 +998,7 @@
                                                 android:background="@null"
                                                 android:text="0"
                                                 android:inputType="number"
+                                                android:maxLength="2"
                                                 android:textAlignment="center"
                                                 android:textSize="20px" />
                                         </androidx.cardview.widget.CardView>
@@ -1230,8 +1290,8 @@
                                                             android:layout_width="match_parent"
                                                             android:layout_height="wrap_content"
                                                             android:layout_weight="2"
-                                                            android:value="0"
-                                                            android:valueFrom="0"
+                                                            android:value="1"
+                                                            android:valueFrom="1"
                                                             android:valueTo="100"
                                                             app:thumbColor="#3A5A8A"
                                                             app:thumbStrokeColor="@color/white"
@@ -1247,7 +1307,7 @@
                                                             android:layout_gravity="center"
                                                             android:layout_weight="8"
                                                             android:gravity="center"
-                                                            android:text="0 %"
+                                                            android:text="1 %"
                                                             android:textColor="@color/black"
                                                             android:textSize="12dp" />
 
@@ -1593,8 +1653,8 @@
                                                             android:layout_width="match_parent"
                                                             android:layout_height="wrap_content"
                                                             android:layout_weight="2"
-                                                            android:value="0"
-                                                            android:valueFrom="0"
+                                                            android:value="1"
+                                                            android:valueFrom="1"
                                                             android:valueTo="100"
                                                             app:thumbColor="#3A5A8A"
                                                             app:thumbStrokeColor="@color/white"
@@ -1610,7 +1670,7 @@
                                                             android:layout_gravity="center"
                                                             android:layout_weight="8"
                                                             android:gravity="center"
-                                                            android:text="0 %"
+                                                            android:text="1 %"
                                                             android:textColor="@color/black"
                                                             android:textSize="12dp" />
 
@@ -2353,6 +2413,7 @@
         tools:ignore="VectorDrawableCompat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
 
 
 

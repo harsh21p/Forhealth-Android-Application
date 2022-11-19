@@ -1,6 +1,5 @@
 package com.example.forhealth.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

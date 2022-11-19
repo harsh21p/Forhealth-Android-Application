@@ -1,6 +1,5 @@
 package com.example.forhealth.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,19 +10,26 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
 import com.example.forhealth.bluetooth.Bluetooth
+import com.example.forhealth.dagger.BluetoothQualifier
+import com.example.forhealth.dagger.Services
 import com.example.forhealth.datamodel.ModelPairedDevices
+import javax.inject.Inject
+import javax.inject.Singleton
 
-internal class PairedDevicesViewHolder (private var List: List<ModelPairedDevices>, private val listener: Context,private val progressBar:ProgressBar,private val sidebar:CardView,private val controls:CardView) :
+@Singleton
+class PairedDevicesViewHolder @Inject constructor (private var List: List<ModelPairedDevices>,bluetooth: Services) :
     RecyclerView.Adapter<PairedDevicesViewHolder.MyViewHolder>() {
-    internal open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+
+    var bluetooth: Services = bluetooth
+
+    open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
         }
         override fun onClick(p0: View?) {
             val position = adapterPosition
             if(position!= RecyclerView.NO_POSITION) {
-                val bluetooth = Bluetooth(listener)
-                bluetooth.onItemClick(position,listener,progressBar,sidebar,controls)
+                bluetooth.onItemClick(position)
             }
         }
     }

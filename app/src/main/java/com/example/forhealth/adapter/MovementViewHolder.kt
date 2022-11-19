@@ -7,10 +7,10 @@ import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
-import com.example.forhealth.activity.SessionControlPanal
+import com.example.forhealth.activity.SessionControlPanel
 import com.example.forhealth.datamodel.ModelExercise
 
-internal class MovementViewHolder (private var mList: List<ModelExercise>, private val listener: SessionControlPanal) :
+internal class MovementViewHolder (private var mList: List<ModelExercise>, private val listener: SessionControlPanel) :
     RecyclerView.Adapter<MovementViewHolder.MyViewHolder>() {
     internal inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
 

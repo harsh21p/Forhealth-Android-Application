@@ -10,9 +10,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
 
     <application
+        android:name=".dagger.ApplicationScope"
         android:allowBackup="true"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher"
@@ -133,7 +135,7 @@
 
 <!--       SessionControl Panel-->
 
-        <activity android:name="com.example.forhealth.activity.SessionControlPanal"
+        <activity android:name="com.example.forhealth.activity.SessionControlPanel"
             android:label="ForHealth"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.BaseTheme">

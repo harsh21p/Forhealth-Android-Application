@@ -82,44 +82,56 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
 
         var editButton:ImageView = itemView.findViewById(R.id.edit_button)
         var deleteButton:ImageView = itemView.findViewById(R.id.delete_button)
+        var copyButton:ImageView = itemView.findViewById(R.id.copy_button)
+
 
         fun bind(position: Int) {
             val recyclerViewModel = List[position]
 
-            if(recyclerViewModel.firstMovementType=="PASSIVE"){
+            if(recyclerViewModel.firstMovementType=="PASSIVE" || recyclerViewModel.firstMovementType=="ACTIVE"){
                  firstMovementResistance.text="NA"
               firstMovementAssistance.text="NA"
                 firstMovementHoldTime.text="NA"
             }
             else{
-                if(recyclerViewModel.firstMovementType=="AR ( ISOMETRIC )"){
+                if(recyclerViewModel.firstMovementType=="AR ( ISOMETRIC )" || recyclerViewModel.firstMovementType=="AR ( ISOTONIC )"){
                   firstMovementAssistance.text="NA"
                      firstMovementResistance.text=recyclerViewModel.firstMovementResistance
                     firstMovementHoldTime.text=recyclerViewModel.firstMovementHoldTime
+                    if(recyclerViewModel.firstMovementType=="AR ( ISOTONIC )"){
+                        firstMovementHoldTime.text="NA"
+                    }
                 }
                 else{
-                  firstMovementAssistance.text=recyclerViewModel.firstMovementAssistance
-                     firstMovementResistance.text="NA"
-                    firstMovementHoldTime.text="NA"
+                        firstMovementAssistance.text=recyclerViewModel.firstMovementAssistance
+                        firstMovementResistance.text="NA"
+                        firstMovementHoldTime.text="NA"
                 }
             }
 
-            if(recyclerViewModel.secondMovementType=="PASSIVE"){
+            if(recyclerViewModel.secondMovementType=="PASSIVE" ||recyclerViewModel.secondMovementType=="ACTIVE" ){
                 secondMovementResistance.text="NA"
                 secondMovementAssistance.text="NA"
                 secondMovementHoldTime.text="NA"
             } else{
-                if(recyclerViewModel.secondMovementType == "AR ( ISOMETRIC )"){
+                if(recyclerViewModel.secondMovementType == "AR ( ISOMETRIC )" || recyclerViewModel.secondMovementType=="AR ( ISOTONIC )"){
                     secondMovementAssistance.text="NA"
                     secondMovementResistance.text=recyclerViewModel.secondMovementResistance
                     secondMovementHoldTime.text=recyclerViewModel.secondMovementHoldTime
+
+                    if(recyclerViewModel.secondMovementType=="AR ( ISOTONIC )"){
+                        secondMovementHoldTime.text="NA"
+
+                    }
                 }
                 else{
-                    secondMovementResistance.text="NA"
-                    secondMovementHoldTime.text="NA"
-                    secondMovementAssistance.text=recyclerViewModel.secondMovementAssistance
+
+                        secondMovementResistance.text="NA"
+                        secondMovementHoldTime.text="NA"
+                        secondMovementAssistance.text=recyclerViewModel.secondMovementAssistance
                 }
             }
+
 
             editButton.setOnClickListener(View.OnClickListener {
                 val position = adapterPosition
@@ -127,6 +139,13 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
                 listener.editButton(position)
             }
 
+            })
+
+            copyButton.setOnClickListener(View.OnClickListener {
+                val position = adapterPosition
+                if(position!= RecyclerView.NO_POSITION) {
+                    listener.copyButton(position)
+                }
             })
 
 
@@ -148,7 +167,7 @@ internal class ExerciseViewHolder (private var List: List<ModelExercise>, privat
             repetation.text = recyclerViewModel.repetition
             firstMovementSpeed.text = recyclerViewModel.firstMovementSpeed
             secondMovementSpeed.text = recyclerViewModel.secondMovementSpeed
-            
+
         }
     }
 

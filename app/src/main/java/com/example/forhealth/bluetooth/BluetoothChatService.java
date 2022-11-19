@@ -11,12 +11,17 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.forhealth.dagger.Services;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 //import com.stuffaboutcode.logger.Log;
 
@@ -26,6 +31,7 @@ import java.util.UUID;
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
+
 public class BluetoothChatService {
     // Debugging
     private static final String TAG = "BluetoothChatService";
@@ -326,7 +332,6 @@ public class BluetoothChatService {
                 try {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
-
                         socket = mmServerSocket.accept();
 
                 } catch (Exception e) {

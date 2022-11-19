@@ -117,12 +117,49 @@
                     app:layout_constraintTop_toTopOf="@+id/physiotherapistcard">
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/guest_button"
+                        android:layout_width="505px"
+                        android:layout_height="83.39px"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="20dp"
+                        android:layout_marginTop="20dp"
+                        app:cardBackgroundColor="#EEF0F6"
+                        app:cardCornerRadius="50dp"
+                        app:cardElevation="4dp">
+
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/raleway_medium"
+                                android:gravity="center_horizontal"
+                                android:text="Guest"
+                                android:textAlignment="center"
+                                android:textColor="#042A73"
+                                android:textFontWeight="800"
+                                android:textSize="30px"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/signup_button"
                         android:layout_width="505px"
                         android:layout_height="83.39px"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="20dp"
                         android:layout_marginTop="20dp"
+                        android:layout_below="@+id/guest_button"
                         app:cardBackgroundColor="#EEF0F6"
                         app:cardCornerRadius="50dp"
                         app:cardElevation="4dp">
@@ -157,7 +194,7 @@
                         android:layout_height="83.39px"
                         android:layout_below="@+id/signup_button"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="88.96px"
+                        android:layout_marginTop="20dp"
                         android:layout_marginBottom="20dp"
                         app:cardBackgroundColor="#EEF0F6"
                         app:cardCornerRadius="50dp"

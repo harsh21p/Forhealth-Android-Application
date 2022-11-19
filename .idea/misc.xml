@@ -3,6 +3,43 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/drawable/border.xml" value="0.2265" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/create_new_patient.xml" value="0.1" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/doctors_landing_page.xml" value="0.22189349112426035" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/existing_patient.xml" value="0.1" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/existing_users.xml" value="0.1" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/guest_mode.xml" value="0.1721311475409836" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/patient_profile_page.xml" value="0.264" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/session_control_panal.xml" value="0.2" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/sessons_information.xml" value="0.176" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/add_movement_layout.xml" value="0.18432971014492755" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/all_exercises_completed.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/bluetooth_paired_devices_layout.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/create_session_view.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/custom_dialog_layout.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/custom_dialog_layout_avatar.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/custom_dialog_layout_data_save.xml" value="0.264" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/custom_dialog_layout_delete.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/custom_dialog_layout_shutdown.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/guest_mode.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/report_popup.xml" value="0.264" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/session_control_panal.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/Github/Forhealth/Software/Android Application/Optimization/Forhealth-Android-Application - MVVM/app/src/main/res/layout/text_box_popup.xml" value="0.264" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/create_new_patient.xml" value="0.2635" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/doctors_landing_page.xml" value="0.2635" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/existing_patient.xml" value="0.1405" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/guest_mode.xml" value="0.4" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/patient_profile_page.xml" value="0.20588235294117646" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/session_control_panal.xml" value="0.4" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout-w800dp/sessons_information.xml" value="0.20588235294117646" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout/add_movement_layout.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout/choice_doctor_or_patient.xml" value="0.1015625" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout/custom_dialog_layout_data_save.xml" value="0.27447916666666666" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout/existing_patient.xml" value="0.14635416666666667" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout/guest_mode.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout/patient_profile_page.xml" value="0.22826086956521738" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout/session_control_panal.xml" value="0.18432971014492755" />
+        <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application - MVVM/app/src/main/res/layout/sessons_information.xml" value="0.22826086956521738" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable-v24/back_button_layout.xml" value="0.174" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable-v24/ic_back.xml" value="0.174" />
         <entry key="..\:/ForHealth/TabApp/Forhealth-Android-Application/app/src/main/res/drawable-v24/ic_baseline_restore_24.xml" value="0.174" />
@@ -102,7 +139,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

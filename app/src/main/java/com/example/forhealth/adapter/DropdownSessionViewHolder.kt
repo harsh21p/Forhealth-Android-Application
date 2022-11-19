@@ -8,7 +8,6 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
 import com.example.forhealth.activity.GuestMode
-import com.example.forhealth.datamodel.ModelMovement
 import com.example.forhealth.datamodel.ModelPairedDevices
 
 internal class DropdownSessionViewHolder (private var List: ArrayList<ModelPairedDevices>, private val listener: GuestMode) :

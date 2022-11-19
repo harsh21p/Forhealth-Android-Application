@@ -7,127 +7,172 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
-import com.example.forhealth.adapter.PairedDevicesViewHolder
-import com.example.forhealth.bluetooth.StaticReference
-import com.example.forhealth.bluetooth.StaticReference.*
-import com.example.forhealth.common.Common
-import com.example.forhealth.database.MyDatabaseHelper
-import kotlinx.android.synthetic.main.create_new_patient.*
-import kotlinx.android.synthetic.main.create_new_patient.all_controls_card
-import kotlinx.android.synthetic.main.create_new_patient.back_button
-import kotlinx.android.synthetic.main.create_new_patient.control_brake_state
-import kotlinx.android.synthetic.main.create_new_patient.control_close
-import kotlinx.android.synthetic.main.create_new_patient.control_direction_anticlockwise
-import kotlinx.android.synthetic.main.create_new_patient.control_direction_clockwise
-import kotlinx.android.synthetic.main.create_new_patient.control_encoder_I
-import kotlinx.android.synthetic.main.create_new_patient.control_encoder_II
-import kotlinx.android.synthetic.main.create_new_patient.control_refresh
-import kotlinx.android.synthetic.main.create_new_patient.control_reset
-import kotlinx.android.synthetic.main.create_new_patient.control_set_home
-import kotlinx.android.synthetic.main.create_new_patient.control_shutdown
-import kotlinx.android.synthetic.main.create_new_patient.control_torque
-import kotlinx.android.synthetic.main.create_new_patient.controls
-import kotlinx.android.synthetic.main.create_new_patient.hamburger
-import kotlinx.android.synthetic.main.create_new_patient.main_layout
-import kotlinx.android.synthetic.main.create_new_patient.patient_age
-import kotlinx.android.synthetic.main.create_new_patient.patient_contact
-import kotlinx.android.synthetic.main.create_new_patient.patient_name
-import kotlinx.android.synthetic.main.create_new_patient.patient_weight
-import kotlinx.android.synthetic.main.create_new_patient.progress_bar
-import kotlinx.android.synthetic.main.create_new_patient.sidebar
-import kotlinx.android.synthetic.main.patient_profile_page.*
+import com.example.forhealth.dagger.*
+import com.example.forhealth.database.*
+import com.example.forhealth.databinding.CreateNewPatientBinding
+import kotlinx.android.synthetic.main.signup.*
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 class CreateNewPatient : AppCompatActivity() {
 
     val sdf = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-    private var myDatabaseHelper:MyDatabaseHelper?=null
+    private var avatarSelected = 0
+
+    @Inject
+    @CommonQualifier lateinit var common : Services
+
+    @Inject
+    @BluetoothQualifier lateinit var bluetooth : Services
+
+    var check = false
+
+    @Inject
+    lateinit var myDatabaseInstance : MyDatabaseInstance
+
+    lateinit var mainViewModel : DatabaseViewModel
+
+    lateinit var myLiveData : MyLiveData
+
+    private lateinit var binding : CreateNewPatientBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
-        setContentView(R.layout.create_new_patient)
+        binding = DataBindingUtil.setContentView(this,R.layout.create_new_patient)
+
+        var myComponent = (application as ApplicationScope).myComponent
+        myComponent.inject(this)
 
         val decorView = window.decorView
         val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
         decorView.systemUiVisibility = uiOptions
 
-        hamburgerVisibilityManager = 1
-        speedMeter = null
-        chart = null
+        val dao = myDatabaseInstance.databaseDao()
+        val repository = DataRepository(dao)
 
-        val common =Common(this)
+        myLiveData = MyLiveData.getMyLiveData(dao,bluetooth)
 
-        holder_profile.setOnClickListener(View.OnClickListener {
-            val view = layoutInflater.inflate(R.layout.patient_avatar_layout,null)
-            common.avatarDialogBoxForPatient(patient_profile,view)
+        mainViewModel = ViewModelProvider(this, DatabaseViewModelFactory(repository)).get(
+            DatabaseViewModel::class.java)
+
+        myLiveData.liveDataMutable.observe(this, androidx.lifecycle.Observer {
+            binding.tourqe = it[0]+" nm"
+            binding.angle = it[1]+" deg"
+            binding.speed = it[2]+" rpm"
+//            bluetooth.sendMessage("send")
+
+        })
+        myLiveData.btConnectionMutable.observe(this, androidx.lifecycle.Observer {
+            if(myLiveData.btConnectionMutable.value==true) {
+                check = true
+                Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show()
+                binding.controls.visibility = View.VISIBLE
+            }else{
+                if(check) {
+                    Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
+                    check = false
+                    binding.controls.visibility = View.GONE
+                    binding.allControlsCard.visibility = View.GONE
+                }
+            }
         })
 
-        back_button.setOnClickListener(View.OnClickListener {
+        myLiveData.avatarSelectedPatientMutable.observe(this, androidx.lifecycle.Observer {
+            avatarSelected = it
+            if(it == 0) {
+
+                binding.patientProfile.setImageDrawable(
+                    ContextCompat.getDrawable(this,
+                        R.drawable.male_avatar_patient_a
+                    ));
+            }else{
+                if(it==1){
+                    binding.patientProfile.setImageDrawable(
+                        ContextCompat.getDrawable(this,
+                            R.drawable.male_avatar_patient_b
+                        ));
+                }else{
+                    if(it==2){
+                        binding.patientProfile.setImageDrawable(
+                            ContextCompat.getDrawable(this,
+                                R.drawable.female_avatar_patient_a
+                            ));
+                    }else{
+                        binding.patientProfile.setImageDrawable(
+                            ContextCompat.getDrawable(this,
+                                R.drawable.female_avatar_patient_b
+                            ));
+                    }
+                }
+            }
+        })
+
+
+        binding.holderProfile.setOnClickListener(View.OnClickListener {
+            val view = layoutInflater.inflate(R.layout.patient_avatar_layout,null)
+            common.avatarDialogBoxForPatient(view,this)
+        })
+
+        binding.backButton.setOnClickListener(View.OnClickListener {
             val iDoctorsLandingPage = Intent(this@CreateNewPatient, DoctorsLandingPage::class.java)
             startActivity(iDoctorsLandingPage)
             finish()
         })
-        myDatabaseHelper = MyDatabaseHelper(this)
 
-        save_button.setOnClickListener(View.OnClickListener {
+        binding.saveButton.setOnClickListener(View.OnClickListener {
             addData()
         })
 
-        main_layout.setOnClickListener(View.OnClickListener {
-            common.hideKeyboard()
-
-            sidebar.visibility = View.GONE
-            all_controls_card.visibility = View.GONE
-            hamburgerVisibilityManager = 1
+        binding.mainLayout.setOnClickListener(View.OnClickListener {
+            common.hideKeyboard(this)
+            binding.sidebar.visibility = View.GONE
+            binding.allControlsCard.visibility = View.GONE
         })
 
         bluetoothSetup()
     }
 
     private fun addData() {
-        if(patient_name.text!!.isBlank() || patient_age.text!!.isBlank() || patient_contact.text!!.isBlank()  || patient_weight.text!!.isBlank() || patient_gender.text!!.isBlank() ){
+        if(binding.patientName.text!!.isBlank() || binding.patientAge.text!!.isBlank() || binding.patientContact.text!!.isBlank()  || binding.patientWeight.text!!.isBlank() || binding.patientGender.text!!.isBlank() ){
             Toast.makeText(this,"All field's are required",Toast.LENGTH_SHORT).show()
-        }else{
+        } else{
             val currentDateTime: String = sdf.format(Date())
             val currentDate = currentDateTime.split('_')
-            var  result = myDatabaseHelper!!.addDataToPatients(selectedPatientAvatar.toString(),mAuthString.toString(),patient_weight.text.toString(),patient_age.text.toString(),patient_name.text!!.toString(),patient_gender.text.toString(),currentDate[0],patient_contact.text.toString())
-            Toast.makeText(this,result,Toast.LENGTH_SHORT).show()
-            val iExistingPatient= Intent(this@CreateNewPatient, ExistingPatient::class.java)
-            startActivity(iExistingPatient)
+            mainViewModel.insertPatient(Patients(0,binding.patientName.text.toString(),myLiveData.currentCaregiverMutable.value!!,avatarSelected,currentDate[0].toLong(),binding.patientGender.text.toString(),binding.patientWeight.text.toString().toInt(),binding.patientWeight.text.toString().toInt(),binding.patientAge.text.toString().toInt(),binding.patientContact.text.toString().toLong()))
+            Toast.makeText(this,"Patient added",Toast.LENGTH_SHORT).show()
+
+            startActivity(Intent(this@CreateNewPatient, ExistingPatient::class.java))
             finish()
         }
     }
 
 
     private fun bluetoothSetup() {
-
-        aSwitch = control_brake_state
-        torque = control_torque
-        angle = control_encoder_I
-        speed = control_encoder_II
-
-        inputPageConnection = 1
-        val common = Common(this)
-        common.setClickForSideBar(hamburger,controls,sidebar,all_controls_card)
+        common.setClickForSideBar(binding.hamburger,binding.controls,binding.sidebar,binding.allControlsCard,this)
         val view = layoutInflater.inflate(R.layout.custom_dialog_layout_shutdown,null)
-        common.setClickForControls(view,sidebar,all_controls_card,controls,control_shutdown,control_reset,control_set_home,control_close,control_direction_clockwise,control_direction_anticlockwise,control_brake_state,control_refresh)
-
-        pairedDevicesViewHolder = PairedDevicesViewHolder(pairedDevicesList,this,progress_bar,sidebar,controls)
+        common.setClickForControls(view,binding.sidebar,binding.allControlsCard,binding.controls,binding.controlShutdown,binding.controlReset,binding.controlSetHome,binding.controlClose,binding.controlDirectionClockwise,binding.controlDirectionAnticlockwise,binding.controlBrakeState,binding.controlRefresh,this,binding.speedSlider)
 
         val pairedDevicesRecyclerView = findViewById<RecyclerView>(R.id.paired_devices_recycler_view)
         pairedDevicesRecyclerView.layoutManager = LinearLayoutManager(this)
-        pairedDevicesRecyclerView.adapter = pairedDevicesViewHolder
+        pairedDevicesRecyclerView.adapter = myLiveData.pairedDevicesViewHolder
 
+        binding.speedSlider!!.addOnChangeListener { slider, value, fromUser ->
+            binding.speedValue!!.text= value.toInt().toString()+" %"
+        }
     }
 }

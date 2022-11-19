@@ -9,7 +9,6 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.example.forhealth.R
 import com.example.forhealth.activity.PatientProfilePage
-import com.example.forhealth.datamodel.ModelPairedDevices
 import com.example.forhealth.datamodel.ModelScheduledSession
 
 internal class SessionsViewHolder (private var List: List<ModelScheduledSession>, private val listener: PatientProfilePage) :

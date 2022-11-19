@@ -1,20 +1,27 @@
 package com.example.forhealth.activity
 
 import android.content.Intent
+import android.database.Observable
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.forhealth.R
-import com.example.forhealth.bluetooth.StaticReference.selectedAvatar
-import com.example.forhealth.common.Common
+import com.example.forhealth.dagger.*
+import com.example.forhealth.database.DataRepository
+import com.example.forhealth.database.DatabaseViewModel
+import com.example.forhealth.database.DatabaseViewModelFactory
+import com.example.forhealth.database.MyDatabaseInstance
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -24,12 +31,26 @@ import kotlinx.android.synthetic.main.signup.back_to_splash_screen
 import kotlinx.android.synthetic.main.signup.idEdtPassword
 import kotlinx.android.synthetic.main.signup.idEdtUserName
 import kotlinx.android.synthetic.main.signup.main_layout
+import javax.inject.Inject
 
 
 class Signup : AppCompatActivity() {
     private var database= FirebaseDatabase.getInstance()
     private var myRef: DatabaseReference? = null
-    val common = Common(this)
+    @Inject
+    @CommonQualifier
+    lateinit var common:Services
+    lateinit var mainViewModel: DatabaseViewModel
+
+    @Inject
+    lateinit var localDatabase: MyDatabaseInstance
+
+    private var avatarSelected = 0
+
+    lateinit var myLiveData:MyLiveData
+    @Inject
+    @BluetoothQualifier lateinit var bluetooth: Services
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -52,6 +73,38 @@ class Signup : AppCompatActivity() {
         var auth= FirebaseAuth.getInstance()
         myRef = database!!.reference
 
+        var myComponent = (application as ApplicationScope).myComponent
+        myComponent.inject(this)
+
+        mainViewModel = ViewModelProvider(this, DatabaseViewModelFactory(DataRepository(localDatabase.databaseDao()))).get(
+            DatabaseViewModel::class.java)
+
+        myLiveData = MyLiveData.getMyLiveData(localDatabase.databaseDao(), bluetooth)
+
+        myLiveData.avatarSelectedMutable.observe(this, Observer {
+            avatarSelected = it
+            if(it == 0) {
+
+                idEdiAvatar.setImageDrawable(
+                    ContextCompat.getDrawable(this,
+                        R.drawable.avatar_male
+                    ));
+            }else{
+                if(it==1){
+                    idEdiAvatar.setImageDrawable(
+                        ContextCompat.getDrawable(this,
+                            R.drawable.avatar_female_a
+                        ));
+                }else{
+                    if(it==2){
+                        idEdiAvatar.setImageDrawable(
+                            ContextCompat.getDrawable(this,
+                                R.drawable.avatar_female_b
+                            ));
+                    }
+                }
+            }
+        })
 
         idEdtPin1.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -133,7 +186,7 @@ class Signup : AppCompatActivity() {
                                             if (task.isSuccessful) {
                                                 localRef!!.child("Name").setValue(idEdtUserNamePre.text.toString()+" "+idEdtUserName.text.toString()).addOnCompleteListener { task ->
                                                     if (task.isSuccessful) {
-                                                        localRef!!.child("Avatar").setValue(selectedAvatar).addOnCompleteListener { task ->
+                                                        localRef!!.child("Avatar").setValue(avatarSelected).addOnCompleteListener { task ->
                                                             if(task.isSuccessful) {
 
                                                                 progress_bar_signup.visibility = View.GONE
@@ -144,7 +197,7 @@ class Signup : AppCompatActivity() {
                                                                 val msg = view.findViewById<TextView>(R.id.string_for_dilog)
                                                                 msg.text = "Signup successful."
 
-                                                                common.textDilog(view)
+                                                                common.textDilog(view,this)
 
                                                                 val splashScreenTimeout = 2500
                                                                 Handler().postDelayed({
@@ -167,9 +220,7 @@ class Signup : AppCompatActivity() {
                             val view = layoutInflater.inflate(R.layout.msg_dilog,null)
                             val msg = view.findViewById<TextView>(R.id.string_for_dilog)
                             msg.text = e.toString().split(":")[1]
-                            common.textDilog(view)
-                            common.textDilog(view)
-//                                Toast.makeText(this, "Something went wrong please contact support ", Toast.LENGTH_LONG).show()
+                            common.textDilog(view,this)
                                 progress_bar_signup.visibility = View.GONE
                                 signup_button_text.visibility = View.VISIBLE
                                 auth.signOut()
@@ -181,11 +232,12 @@ class Signup : AppCompatActivity() {
                     val view = layoutInflater.inflate(R.layout.msg_dilog,null)
                     val msg = view.findViewById<TextView>(R.id.string_for_dilog)
                     msg.text = exception.toString().split(":")[1]
-                    common.textDilog(view)
+                    common.textDilog(view,this)
 //                    Toast.makeText(this, "Something went wrong ($exception)", Toast.LENGTH_LONG).show()
                 }
             }
         })
+
 
         go_to_login_page.setOnClickListener {
             startActivity(iLoginScreen)
@@ -198,13 +250,12 @@ class Signup : AppCompatActivity() {
         })
 
         main_layout.setOnClickListener(View.OnClickListener {
-            val common = Common(this)
-            common.hideKeyboard()
+            common.hideKeyboard(this)
         })
 
         idEdiAvatarHolder.setOnClickListener(View.OnClickListener {
             val view = layoutInflater.inflate(R.layout.custom_dialog_layout_avatar,null)
-            common.avatarDialogBox(idEdiAvatar,view)
+            common.avatarDialogBox(view,this)
         })
     }
 }
